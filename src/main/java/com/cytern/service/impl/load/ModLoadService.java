@@ -47,6 +47,8 @@ public class ModLoadService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        //对所有加载完成的mods 进行解析 判断是否满足依赖
+
         mods = waitMods;
         assets = waitAssets;
     }
@@ -87,7 +89,7 @@ public class ModLoadService {
             }
             File mainData = files[0];
             JSONObject mainObject = JSONObject.parseObject(FileUtil.readString(mainData, StandardCharsets.UTF_8));
-            modObject.put("mian",mainObject);
+            modObject.put("main",mainObject);
             modObject.put("baseUrl",file.toFile().getParentFile().getPath());
             sameTypeMods.put(modCode,modObject);
             LoggerService.info("mod LoadSuccess:  " + file.getParent().toString());

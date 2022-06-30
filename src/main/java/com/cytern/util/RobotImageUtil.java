@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static cn.hutool.core.img.ImgUtil.cut;
@@ -37,8 +38,8 @@ public class RobotImageUtil{
     /**
      * 图片属性为 复合图片 时 需要切分图片
      */
-    public static List<String> subImageList(File sourceImage, SimpleImageSub simpleImageSub) {
-        ArrayList<String> waitList = new ArrayList<>();
+    public static HashMap<String,String> subImageList(File sourceImage, SimpleImageSub simpleImageSub) {
+        HashMap<String,String> waitList = new HashMap<>();
         //获取sourceImage的位置
         String sourceDir = sourceImage.getParentFile().getPath();
         File zipFile = new File(sourceDir + "/unzip");
@@ -72,7 +73,7 @@ public class RobotImageUtil{
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     File realFile = new File(sourceDir + "/unzip" +"/" + imageName + file.getFileName());
                     ImageIO.write(toBufferedImage(ImgUtil.getImage(file.toUri().toURL())),IMAGE_TYPE_PNG,realFile);
-                    waitList.add(realFile.toPath().toString());
+                    waitList.put(realFile.getName(),realFile.toPath().toString());
                     return FileVisitResult.CONTINUE;
                 }
             });
@@ -82,10 +83,6 @@ public class RobotImageUtil{
         FileUtil.del(unLoadDir);
         return waitList;
 
-    }
-    public static void main(String[] args) {
-        List<String> strings = RobotImageUtil.subImageList(FileUtil.file("E:\\projects\\javaProject\\dadi\\mods\\helly\\assets\\Gunther.png"), new SimpleImageSub(2, 2));
-        System.out.println();
     }
 
 
