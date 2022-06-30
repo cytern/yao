@@ -6,24 +6,24 @@ import com.alibaba.fastjson.JSONArray;
  * 简单图片拆分
  */
 public class SimpleImageSub {
-    private Integer xNum;
-    private Integer yNum;
+    private Integer row;
+    private Integer col;
     private JSONArray index;
 
-    public Integer getxNum() {
-        return xNum;
+    public Integer getRow() {
+        return row;
     }
 
-    public void setxNum(Integer xNum) {
-        this.xNum = xNum;
+    public void setRow(Integer row) {
+        this.row = row;
     }
 
-    public Integer getyNum() {
-        return yNum;
+    public Integer getCol() {
+        return col;
     }
 
-    public void setyNum(Integer yNum) {
-        this.yNum = yNum;
+    public void setCol(Integer col) {
+        this.col = col;
     }
 
     public JSONArray getIndex() {
@@ -38,8 +38,8 @@ public class SimpleImageSub {
 
     }
 
-    public SimpleImageSub(Integer xNum, Integer yNum) {
-        this.xNum = xNum;
-        this.yNum = yNum;
+    public SimpleImageSub(Integer row, Integer col) {
+        this.row = row;
+        this.col = col;
     }
 }

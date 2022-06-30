@@ -22,7 +22,7 @@ public class ModLoadService {
     //模组
     private final HashMap<String,HashMap<String,JSONObject>> mods;
     //静态资源 code : 绝对路径
-    private final HashMap<String,String> assets;
+    private final HashMap<String,HashMap<String,String>> assets;
 
 
     /**
@@ -30,7 +30,7 @@ public class ModLoadService {
      */
     private ModLoadService() {
         HashMap<String,HashMap<String,JSONObject>> waitMods = new HashMap<>();
-        HashMap<String, String> waitAssets = new HashMap<>();
+        HashMap<String,HashMap<String,String>> waitAssets = new HashMap<>();
         try {
             Files.walkFileTree(Paths.get(FileLoadUtil.modsUrl), new RobotFileVisitor<Path>() {
                 @Override
@@ -38,7 +38,9 @@ public class ModLoadService {
                     //加载json文件
                     String modCode = loadJsonData(waitMods, file);
                     //加载素材文件
-                    loadAssetsData(waitAssets,file,modCode);
+                    if (modCode != null) {
+                        loadAssetsData(waitAssets,file,modCode);
+                    }
                     return FileVisitResult.CONTINUE;
                 }
             });
@@ -96,11 +98,12 @@ public class ModLoadService {
 
     }
 
-    private void loadAssetsData (HashMap<String, String> waitAssets,Path file,String modCode) {
+    public static void loadAssetsData (HashMap<String,HashMap<String,String>> waitAssets,Path file,String modCode) {
         if (modCode == null) {
-            LoggerService.error("modCode is null ");
+            LoggerService.error("modCode is null " + file.toString());
             return;
         }
+        HashMap<String, String> singleMap = waitAssets.getOrDefault(modCode,new HashMap<>());
         //是否有assets 文件夹
         File[] files = file.getParent().toFile().listFiles(new FileFilter() {
             @Override
@@ -114,7 +117,7 @@ public class ModLoadService {
                 Files.walkFileTree(Paths.get(assets.getPath()), new RobotFileVisitor<Path>() {
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                        waitAssets.put(modCode + file.getFileName(),file.toString());
+                        singleMap.put(file.getFileName().toString(),file.toString());
                         return FileVisitResult.CONTINUE;
                     };
 
@@ -124,6 +127,7 @@ public class ModLoadService {
             }
 
         }
+        waitAssets.put(modCode,singleMap);
     }
 
     public static ModLoadService getInstance( ) {
@@ -141,7 +145,7 @@ public class ModLoadService {
         return mods;
     }
 
-    public HashMap<String, String> getAssets() {
+    public HashMap<String,HashMap<String,String>>  getAssets() {
         return assets;
     }
 }
