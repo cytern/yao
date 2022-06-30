@@ -1,4 +1,4 @@
-package com.cytern.service.impl;
+package com.cytern.service.impl.load;
 
 public class ConfigService {
 

@@ -1,20 +1,17 @@
-package com.cytern.service.impl;
+package com.cytern.service.impl.load;
 
 import cn.hutool.core.io.FileUtil;
 import com.alibaba.fastjson.JSONObject;
-import com.cytern.Plugin;
+import com.cytern.service.impl.LoggerService;
 import com.cytern.util.FileLoadUtil;
 import com.cytern.util.RobotFileVisitor;
-import kotlinx.serialization.json.JsonObject;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -39,18 +36,20 @@ public class ModLoadService {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     //加载json文件
-                    loadJsonData(waitMods,file);
-                    //TODO 加载素材文件 以key value 对形式
+                    String modCode = loadJsonData(waitMods, file);
+                    //加载素材文件
+                    loadAssetsData(waitAssets,file,modCode);
                     return FileVisitResult.CONTINUE;
                 }
             });
         } catch (Exception e) {
             e.printStackTrace();
         }
-       mods = waitMods;
+        mods = waitMods;
+        assets = waitAssets;
     }
 
-    private void loadJsonData( HashMap<String,HashMap<String,JSONObject>> waitMods,Path file) {
+    private String  loadJsonData( HashMap<String,HashMap<String,JSONObject>> waitMods,Path file) {
         if (file.getFileName().toString().equals("config.json") ) {
             JSONObject modObject = new JSONObject();
             HashMap<String,JSONObject> sameTypeMods;
@@ -64,14 +63,14 @@ public class ModLoadService {
                 sameTypeMods = new HashMap<>();
             }
             //判断是否有写mod 码
-            if (modCode == null || modCode.equals("")) {
+            if (modCode.equals("")) {
                LoggerService.error("无法正确加载mod 原因【无效的modCode】 出错mod：" + file.toFile().getPath());
-                return;
+                return null;
             }
             //mod码是否重复
             if (sameTypeMods.containsKey(modCode)) {
                 LoggerService.error("无法正确加载mod 原因【重复的modCode】 重复值为: " +  modCode +" " + "出错mod：" + file.toString());
-                return;
+                return modCode;
             }
             //是否有main.json 主要数据文件
             File[] files = file.getParent().toFile().listFiles(new FileFilter() {
@@ -82,7 +81,7 @@ public class ModLoadService {
             });
             if (files == null || files.length != 1) {
                 LoggerService.error("无法正确加载mod 原因【未正确配置main.json文件】 出错mod：" + file.toString());
-                return;
+                return modCode;
             }
             File mainData = files[0];
             JSONObject mainObject = JSONObject.parseObject(FileUtil.readString(mainData, StandardCharsets.UTF_8));
@@ -91,11 +90,17 @@ public class ModLoadService {
             sameTypeMods.put(modCode,modObject);
             LoggerService.info("mod LoadSuccess:  " + file.getParent().toString());
             waitMods.put(classLoadType,sameTypeMods);
+            return modCode;
         }
+        return null;
 
     }
 
-    private void loadAssetsData (JSONObject modObject,Path file) {
+    private void loadAssetsData (HashMap<String, String> waitAssets,Path file,String modCode) {
+        if (modCode == null) {
+            LoggerService.error("modCode is null ");
+            return;
+        }
         //是否有assets 文件夹
         File[] files = file.getParent().toFile().listFiles(new FileFilter() {
             @Override
@@ -103,6 +108,22 @@ public class ModLoadService {
                 return pathname.getName().equals("assets");
             }
         });
+        if (files != null && files.length ==1) {
+            try {
+                File assets = files[0];
+                Files.walkFileTree(Paths.get(assets.getPath()), new RobotFileVisitor<Path>() {
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                        waitAssets.put(modCode + file.getFileName(),file.toString());
+                        return FileVisitResult.CONTINUE;
+                    };
+
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 
     public static ModLoadService getInstance( ) {
@@ -120,4 +141,7 @@ public class ModLoadService {
         return mods;
     }
 
+    public HashMap<String, String> getAssets() {
+        return assets;
+    }
 }

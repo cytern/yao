@@ -1,4 +1,4 @@
-package com.cytern.service.impl;
+package com.cytern.service.impl.load;
 
 import com.cytern.aspect.RobotCommand;
 import com.cytern.command.RobotCommands;
@@ -9,10 +9,10 @@ import java.util.HashMap;
 /**
  * 机器人指令
  */
-public class RobotCommandService {
-    private static volatile RobotCommandService robotCommandService;
+public class RobotCommandLoadService {
+    private static volatile RobotCommandLoadService robotCommandLoadService;
     private  final HashMap<String,RobotCommands> commandsMap;
-    private RobotCommandService()  {
+    private RobotCommandLoadService()  {
         HashMap<String, RobotCommands> waitCommands = new HashMap<>();
         try {
             Class[] classByPackage = ClassUtils.getClassByPackage("com.cytern.command");
@@ -35,15 +35,15 @@ public class RobotCommandService {
         }
         commandsMap = waitCommands;
     }
-    public static RobotCommandService getInstance() {
-        if (robotCommandService == null) {
+    public static RobotCommandLoadService getInstance() {
+        if (robotCommandLoadService == null) {
             synchronized (ModLoadService.class) {
-                if (robotCommandService == null) {
-                    robotCommandService = new RobotCommandService();
+                if (robotCommandLoadService == null) {
+                    robotCommandLoadService = new RobotCommandLoadService();
                 }
             }
         }
-        return robotCommandService;
+        return robotCommandLoadService;
     }
 
     public HashMap<String, RobotCommands> getCommandsMap() {
