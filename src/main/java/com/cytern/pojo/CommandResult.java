@@ -6,6 +6,11 @@ public class CommandResult {
     private Integer result;
     private String returnMsg;
 
+
+    public static CommandResult success() {
+        return new CommandResult();
+    }
+
     public Integer getResult() {
         return result;
     }
