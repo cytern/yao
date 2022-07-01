@@ -47,10 +47,13 @@ public class ModLoadService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //对所有加载完成的mods 进行解析 判断是否满足依赖
-
         mods = waitMods;
         assets = waitAssets;
+    }
+
+    public static void main(String[] args) {
+        ModLoadService modLoadService = new ModLoadService();
+        System.out.println();
     }
 
     private String  loadJsonData( HashMap<String,HashMap<String,JSONObject>> waitMods,Path file) {

@@ -22,6 +22,17 @@ public abstract class  RobotFileVisitor<T> implements FileVisitor<T> {
     }
 
     /**
+     * Invoked for a file in a directory.
+     *
+     * @param file  a reference to the file
+     * @param attrs the file's basic attributes
+     * @return the visit result
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    public abstract FileVisitResult visitFile(T file, BasicFileAttributes attrs) throws IOException;
+
+    /**
      * Invoked for a directory after entries in the directory, and all of their
      * descendants, have been visited. This method is also invoked when iteration
      * of the directory completes prematurely (by a {@link #visitFile visitFile}
