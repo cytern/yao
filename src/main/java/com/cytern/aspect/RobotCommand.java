@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
  * robotCommand 注解
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@Target(ElementType.METHOD)
 public @interface RobotCommand {
     String activeService();
 }

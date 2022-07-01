@@ -3,9 +3,9 @@ package com.cytern.command;
 import com.alibaba.fastjson.JSONObject;
 import com.cytern.aspect.RobotCommand;
 
-@RobotCommand(activeService = "ITouchCommand")
-public class ITouchCommand implements RobotCommands{
-    @Override
+public class ITouchCommand{
+
+    @RobotCommand(activeService = "ITouchCommand")
     public JSONObject executedCommand(JSONObject params) {
         return null;
     }
