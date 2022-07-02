@@ -53,7 +53,4 @@ public class AssetsUnzipLoadService extends ModCheckService{
         return assetsUnzipLoadService;
     }
 
-    public static void main(String[] args) {
-        AssetsUnzipLoadService assetsUnzipLoadService = new AssetsUnzipLoadService();
-    }
 }

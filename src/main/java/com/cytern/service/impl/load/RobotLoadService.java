@@ -1,4 +1,8 @@
 package com.cytern.service.impl.load;
 
-public class RobotLoadService {
+/**
+ * 加载机器人组件 会加载机器人的会话指令
+ */
+public final class RobotLoadService {
+
 }

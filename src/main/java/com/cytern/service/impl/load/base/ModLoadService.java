@@ -50,10 +50,6 @@ public class ModLoadService {
         assets = waitAssets;
     }
 
-    public static void main(String[] args) {
-        ModLoadService modLoadService = new ModLoadService();
-        System.out.println();
-    }
 
     private String  loadJsonData( HashMap<String,HashMap<String,JSONObject>> waitMods,Path file) {
         if (file.getFileName().toString().equals("config.json") ) {
