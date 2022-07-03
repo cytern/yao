@@ -1,6 +1,7 @@
 package com.cytern.learn;
 
 public class People implements Animal{
+    private Integer height;
     @Override
         public String move() {
             System.out.println("walk");
@@ -12,4 +13,19 @@ public class People implements Animal{
                 return "speak";
             }
 
+    public People() {
+      height = 0;
+    }
+
+    public People(Integer peopleHeight) {
+        this.height = peopleHeight;
+    }
+
+    public Integer getHeight() {
+        return height;
+    }
+
+    public void setHeight(Integer height) {
+        this.height = height;
+    }
 }

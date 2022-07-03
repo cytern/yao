@@ -7,7 +7,7 @@ public class Test {
     public static void main(String[] args) {
         List<Animal> animals = new ArrayList<>();
         Fish fish = new Fish();
-        People people = new People();
+        People people = new People(2);
         Dog dog = new Dog();
         Child child = new Child();
         animals.add(fish);
@@ -24,5 +24,13 @@ public class Test {
             //TODO
             animal.move();
         }
+    }
+
+    public Dog getAnimal() {
+        return null;
+    }
+
+    public Fish getAnimal(Integer height) {
+        return null;
     }
 }
