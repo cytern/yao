@@ -1,4 +1,4 @@
-package com.cytern.service.impl.load;
+package com.cytern.service.impl.load.base;
 
 import cn.hutool.core.io.FileUtil;
 import com.alibaba.fastjson.JSONObject;
@@ -15,20 +15,19 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 
 /**
- * 模组加载
+ * 最基础的模组加载 负责将各个模组的 config main文件加载出来
  */
 public class ModLoadService {
-    private static volatile ModLoadService modLoadService;
     //模组
-    private final HashMap<String,HashMap<String,JSONObject>> mods;
+    protected final HashMap<String,HashMap<String,JSONObject>> mods;
     //静态资源 code : 绝对路径
-    private final HashMap<String,HashMap<String,String>> assets;
+    protected final HashMap<String,HashMap<String,String>> assets;
 
 
     /**
      * 加载mods文件夹下的东西
      */
-    private ModLoadService() {
+    public ModLoadService() {
         HashMap<String,HashMap<String,JSONObject>> waitMods = new HashMap<>();
         HashMap<String,HashMap<String,String>> waitAssets = new HashMap<>();
         try {
@@ -51,10 +50,6 @@ public class ModLoadService {
         assets = waitAssets;
     }
 
-    public static void main(String[] args) {
-        ModLoadService modLoadService = new ModLoadService();
-        System.out.println();
-    }
 
     private String  loadJsonData( HashMap<String,HashMap<String,JSONObject>> waitMods,Path file) {
         if (file.getFileName().toString().equals("config.json") ) {
@@ -135,16 +130,6 @@ public class ModLoadService {
         waitAssets.put(modCode,singleMap);
     }
 
-    public static ModLoadService getInstance( ) {
-        if (modLoadService == null) {
-            synchronized (ModLoadService.class) {
-                if (modLoadService == null) {
-                    modLoadService = new ModLoadService();
-                }
-            }
-        }
-        return modLoadService;
-    }
 
     public HashMap<String, HashMap<String, JSONObject>> getMods() {
         return mods;

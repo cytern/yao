@@ -1,32 +1,27 @@
-package com.cytern.service.impl.load;
+package com.cytern.service.impl.load.base;
 
 import cn.hutool.core.io.FileUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cytern.pojo.SimpleImageSub;
 import com.cytern.util.RobotImageUtil;
-import com.sun.org.apache.xpath.internal.operations.Mod;
 
 import java.util.HashMap;
-import java.util.List;
 
-public class AssetsLoadService {
-    private static volatile AssetsLoadService assetsLoadService;
+public class AssetsUnzipLoadService extends ModCheckService{
+    private static volatile AssetsUnzipLoadService assetsUnzipLoadService;
 
     /**
      * 这位大哥是真正的mod资源加载的消费方 他会解析所有的图片文件 如果需要拆分 会进行拆分
      */
-    private AssetsLoadService() {
-        ModLoadService modLoadService = ModLoadService.getInstance();
-        HashMap<String,HashMap<String,String>>  assets = modLoadService.getAssets();
-        HashMap<String, HashMap<String, JSONObject>> mods = modLoadService.getMods();
+    public AssetsUnzipLoadService() {
+        super();
         //去寻找所有 已经注册的mod中 标记为multiple 的图片 进行再解析
         mods.forEach((k,v) -> {
             v.forEach((key,value) -> {
                 try {
                     JSONObject config = value.getJSONObject("config");
-                    //目前仅加载机器人加载类
-                    if (config.getString("classLoadType").equals("robotLoader")){
+                    if (config.getString("classLoadType").equals("robotLoader") ||config.getString("classLoadType").equals("itemLoader") ){
                         String modCode = config.getString("modCode");
                         JSONArray assetsArray = value.getJSONObject("main").getJSONArray("assets");
                         for (int i = 0; i < assetsArray.size(); i++) {
@@ -47,18 +42,15 @@ public class AssetsLoadService {
         });
     }
 
-    public static AssetsLoadService getInstance() {
-        if (assetsLoadService == null) {
-            synchronized (AssetsLoadService.class) {
-                if (assetsLoadService == null) {
-                    assetsLoadService = new AssetsLoadService();
+    public static AssetsUnzipLoadService getInstance() {
+        if (assetsUnzipLoadService == null) {
+            synchronized (AssetsUnzipLoadService.class) {
+                if (assetsUnzipLoadService == null) {
+                    assetsUnzipLoadService = new AssetsUnzipLoadService();
                 }
             }
         }
-        return assetsLoadService;
+        return assetsUnzipLoadService;
     }
 
-    public static void main(String[] args) {
-        AssetsLoadService assetsLoadService = new AssetsLoadService();
-    }
 }

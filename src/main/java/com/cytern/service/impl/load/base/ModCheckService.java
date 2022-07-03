@@ -1,4 +1,4 @@
-package com.cytern.service.impl.load;
+package com.cytern.service.impl.load.base;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -7,12 +7,13 @@ import com.cytern.service.impl.LoggerService;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ModCheckService {
-    private static volatile ModCheckService modCheckService;
+/**
+ * 模组校验模块 负责校验模组是否拥有她的依赖模组
+ */
+public class ModCheckService extends ModLoadService {
 
-    private ModCheckService(){
-        HashMap<String, HashMap<String, JSONObject>> mods = ModLoadService.getInstance().getMods();
-        HashMap<String, HashMap<String, String>> assets = ModLoadService.getInstance().getAssets();
+    public ModCheckService(){
+        super();
         if (!mods.containsKey("configLoader") || !mods.get("configLoader").containsKey("Core")){
             LoggerService.error("无法正确解析MOD 【Core】 将不会加载后续mod 插件无法正常启动");
             mods.clear();
@@ -49,16 +50,5 @@ public class ModCheckService {
         }
         mods.put("robotLoader",robotLoader);
 
-    }
-
-    public static ModCheckService getInstance() {
-        if (modCheckService == null) {
-            synchronized (ModCheckService.class) {
-                if (modCheckService == null) {
-                    modCheckService = new ModCheckService();
-                }
-            }
-        }
-        return modCheckService;
     }
 }
