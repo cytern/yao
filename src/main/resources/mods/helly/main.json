@@ -1,0 +1,31 @@
+{
+    "assets":[
+            {
+                "fileName":"Gunther.png",
+                "fileType":"图片",
+                "config":{
+                    "imgType":"multiple",
+                    "model":"simple",
+                    "row":2,
+                    "col":2
+                }
+            },
+            {
+                "fileName":"Normal.png",
+                "fileType":"图片",
+                "config":{
+                    "imgType":"multiple",
+                    "model":"simple",
+                    "row":6,
+                    "col":2
+                }
+            }
+    ],
+    "voice":{
+        "volume": "4F",
+        "speed":"-0.7F",
+        "voiceType":"101016L",
+        "primaryLanguage":"1L"
+     }
+
+    }

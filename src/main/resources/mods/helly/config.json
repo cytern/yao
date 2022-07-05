@@ -1,0 +1,16 @@
+{
+  "modName" : "海丽机器人",
+  "modCode" :"HellyRobot",
+  "author" : "cytern",
+  "classLoadType" :"robotLoader",
+  "version": "1.0",
+  "relyOnMods": [
+   {
+      "modName" : "基础配置模组",
+      "modCode" :"Core",
+	  "needVersion": "1.0"
+   }
+  ]
+
+
+}

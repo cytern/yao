@@ -1,0 +1,16 @@
+{
+  "modName" : "基础命令模组",
+  "modCode" :"Command",
+  "author" : "cytern",
+  "classLoadType" :"commandLoader",
+  "version": "1.0",
+  "relyOnMods": [
+    {
+      "modName" : "基础配置模组",
+      "modCode" :"Core",
+	  "needVersion": "1.0"
+   }
+  ]
+
+
+}

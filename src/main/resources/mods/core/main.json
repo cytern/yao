@@ -1,0 +1,18 @@
+{
+    "tencent":{
+        "secretId":"",
+        "secretKey":"",
+        "defultVoice":{
+           "volume": "4F",
+           "speed":"-0.7F",
+           "voiceType":"101016L",
+           "primaryLanguage":"1L"
+        }
+    },
+    "dataService":{
+        "qqId":"",
+        "key":""
+    },
+    "masterQqId": "2477185748",
+    "defultActiveRobot": "helly"
+}

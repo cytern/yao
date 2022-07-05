@@ -1,0 +1,10 @@
+{
+  "modName" : "基础配置模组",
+  "modCode" :"Core",
+  "author" : "cytern",
+  "classLoadType" :"configLoader",
+  "version": "1.0",
+  "relyOnMods": []
+
+
+}

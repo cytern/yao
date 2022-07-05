@@ -13,8 +13,9 @@ import java.util.HashMap;
  */
 public class FilterLoadService {
     private static volatile FilterLoadService filterLoadService;
+    private static  HashMap<String, Method> filters;
     private FilterLoadService() {
-        HashMap<String, JSONObject> waitCommands = new HashMap<>();
+        HashMap<String, Method> waitFilter = new HashMap<>();
         try {
             Class[] classByPackage = ClassUtils.getClassByPackage("com.cytern.filter");
             try {
@@ -24,12 +25,22 @@ public class FilterLoadService {
                     for (Method method : methods) {
                         RobotFilter annotation = method.getAnnotation(RobotFilter.class);
                         if (annotation != null) {
-                            String activeService = annotation.serviceName();
-                            JSONObject jsonObject = new JSONObject();
-                            jsonObject.put("class",singleClass);
-                            jsonObject.put("methodName",method.getName());
-                            waitCommands.put(activeService,jsonObject);
+                            String serviceName = annotation.serviceName();
+                            serviceName = serviceName + "(";
+                            Class<?>[] parameterTypes = method.getParameterTypes();
+                            System.out.println("par");
+                            for (int i = 1; i < parameterTypes.length; i++) {
+                                   if (i !=1) {
+                                       serviceName = serviceName + ",";
+                                   }
+                                   serviceName = serviceName + parameterTypes[i].getSimpleName();
+                            }
+                            serviceName = serviceName + ")";
+                            waitFilter.put(serviceName,method);
+
                         }
+
+
                     }
                 }
             } catch (Exception e) {
@@ -38,7 +49,12 @@ public class FilterLoadService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+           filters = waitFilter;
+    }
 
+    public static void main(String[] args) {
+        FilterLoadService filterLoadService = new FilterLoadService();
+        System.out.println();
     }
 
     public static FilterLoadService getInstance() {
