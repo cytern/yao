@@ -26,6 +26,23 @@
         "speed":"-0.7F",
         "voiceType":"101016L",
         "primaryLanguage":"1L"
-     }
+     },
+    "robotCommand": [
+        {
+            "activeWordRules" : [ "阿斯我的好感度","阿斯我的好感度是"],
+            "activeService": "通用消息",
+            "returnWordRules" : [
+                {
+                    "preFilter" : [],
+                    "repeatFilter": [],
+                    "preReturn": ["好感度增加(0)"],
+                    "returnMsg" : "阿斯对你的好感度是《服务1》"
+                }
+            ]
+        },
+        {
+
+        }
+    ]
 
     }

@@ -17,10 +17,7 @@ public final class Plugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        getLogger().info("爻 框架 开始加载!");
-        getLogger().info("爻 指令集 开始加载!");
-        getLogger().info("爻 指令集 加载完毕!");
-        getLogger().info("爻 模组 开始加载!");
-        getLogger().info("爻 模组 加载完毕!");
+
+
     }
 }

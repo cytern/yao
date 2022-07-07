@@ -6,7 +6,7 @@ import com.cytern.aspect.RobotCommand;
 
 public class ISearchPosCommand {
     @RobotCommand(activeService = "ISearchPosCommand")
-    public JSONObject executedCommand(JSONObject params) {
+    public static JSONObject executedCommand(JSONObject params) {
         return null;
     }
 }
