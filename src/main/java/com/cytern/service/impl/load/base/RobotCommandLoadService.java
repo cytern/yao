@@ -27,7 +27,7 @@ public class RobotCommandLoadService {
                             String activeService = annotation.activeService();
                             JSONObject jsonObject = new JSONObject();
                             jsonObject.put("class",singleClass);
-                            jsonObject.put("methodName",method.getName());
+                            jsonObject.put("method",method);
                             waitCommands.put(activeService,jsonObject);
                         }
                     }

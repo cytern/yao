@@ -2,6 +2,7 @@ package com.cytern;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cytern.exception.RobotException;
+import com.cytern.service.impl.CommandExecutedService;
 import com.cytern.service.impl.load.CommandLoadService;
 import com.cytern.service.impl.load.ConfigLoadService;
 import com.cytern.service.impl.load.RobotLoadService;
@@ -25,17 +26,30 @@ public class CommonMessageProcessor {
     /**
      * 全局消息处理器
      */
-    public void handlerMessageEvent (MessageEvent messageEvent) {
+    public void handlerMessageEvent () {
         String sourceMessage = convertMessageEvent(messageEvent);
+        JSONObject localCommandActiveFilter = localCommandActiveFilter(sourceMessage);
+        //执行完毕后需要返回
         //判断是否是本地指令
-        if (localCommandActiveFilter(sourceMessage)) {
+        if (localCommandActiveFilter != null) {
             //执行本地指令
-        } else if (commonMessageActiveFilter(sourceMessage)) {
+            CommandExecutedService.handleCommand(addEventData(messageEvent,localCommandActiveFilter));
+        }
+        JSONObject commonMessageActiveFilter = commonMessageActiveFilter(sourceMessage);
+        if (commonMessageActiveFilter != null) {
             //执行机器人指令
-        }else if (robotMapActiveFilter(sourceMessage)) {
+            CommandExecutedService.handleCommand(addEventData(messageEvent,commonMessageActiveFilter));
+        }
+
+        if (robotMapActiveFilter(sourceMessage)) {
             //执行自动ai指令
 
         }
+    }
+
+    private JSONObject addEventData(MessageEvent event,JSONObject commandData) {
+        commandData.put("sander",event.getSubject());
+        return commandData;
     }
 
     /**
@@ -79,15 +93,15 @@ public class CommonMessageProcessor {
     /**
      * 是否匹配本地指令
      */
-    public boolean localCommandActiveFilter(String sourceMessage) {
-        return CommandLoadService.getInstance().getLocalCommands().containsKey(sourceMessage);
+    public JSONObject localCommandActiveFilter(String sourceMessage) {
+        return CommandLoadService.getInstance().getLocalCommands().getOrDefault(sourceMessage, null);
     }
 
     /**
      * 是否匹配机器人规则
      */
-    public boolean commonMessageActiveFilter(String sourceMessage) {
-         return RobotLoadService.getInstance().getRobotCommand().containsKey(sourceMessage);
+    public JSONObject commonMessageActiveFilter(String sourceMessage) {
+         return RobotLoadService.getInstance().getRobotCommand().getOrDefault(sourceMessage,null);
     }
     public void dealWithGroupMessageEvent(GroupMessageEvent messageEvent) {
 
