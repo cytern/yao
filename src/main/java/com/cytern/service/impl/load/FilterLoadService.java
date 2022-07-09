@@ -1,12 +1,15 @@
-package com.cytern.service.impl.load.base;
+package com.cytern.service.impl.load;
 
 import com.alibaba.fastjson.JSONObject;
-import com.cytern.aspect.RobotCommand;
 import com.cytern.aspect.RobotFilter;
+import com.cytern.service.impl.LoggerService;
 import com.cytern.util.ClassUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * 筛选器加载器
@@ -25,10 +28,9 @@ public class FilterLoadService {
                     for (Method method : methods) {
                         RobotFilter annotation = method.getAnnotation(RobotFilter.class);
                         if (annotation != null) {
-                            String serviceName = annotation.serviceName();
+                            String serviceName = annotation.name();
                             serviceName = serviceName + "(";
                             Class<?>[] parameterTypes = method.getParameterTypes();
-                            System.out.println("par");
                             for (int i = 1; i < parameterTypes.length; i++) {
                                    if (i !=1) {
                                        serviceName = serviceName + ",";
@@ -66,5 +68,25 @@ public class FilterLoadService {
             }
         }
         return filterLoadService;
+    }
+
+    public  boolean handlerFilterExecuted(JSONObject command, String key, String[] params) {
+        Method method = filters.get(key);
+        if (method == null) {
+            LoggerService.error("can not find the method of the key :" + key);
+            return true;
+        }
+        ArrayList<Object> paramsObject = new ArrayList<>();
+        paramsObject.add(command);
+        paramsObject.addAll(List.of(params));
+        boolean invoke = true;
+        try {
+             invoke =(boolean) method.invoke(null, paramsObject);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return invoke;
     }
 }

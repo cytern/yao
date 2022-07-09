@@ -8,12 +8,13 @@ import com.cytern.aspect.RobotFilter;
  */
 public class FavorFilter {
 
-    @RobotFilter(serviceName = "最小好感度")
+    @RobotFilter(name = "最小好感度")
     public static boolean minFavorFilter(JSONObject baseParams, Integer min) {
+        System.out.println("here");
           return false;
     }
 
-    @RobotFilter(serviceName = "好感度区间")
+    @RobotFilter(name = "好感度区间")
     public static boolean minMaxFavorFilter(JSONObject baseParams, Integer min,Integer max) {
         return false;
     }

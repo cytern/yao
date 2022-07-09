@@ -6,10 +6,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 筛选器注解
+ * 标记为机器人增强器
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface RobotFilter {
+public @interface RobotAdvice {
     String name();
 }

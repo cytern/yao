@@ -33,7 +33,7 @@
             "activeService": "通用消息",
             "returnWordRules" : [
                 {
-                    "preFilter" : [],
+                    "preFilter" : ["最小好感度(10)"],
                     "repeatFilter": [],
                     "preReturn": ["好感度增加(0)"],
                     "returnMsg" : "阿斯对你的好感度是《服务1》"
