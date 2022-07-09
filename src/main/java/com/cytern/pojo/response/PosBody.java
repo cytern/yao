@@ -14,6 +14,10 @@ public class PosBody extends RobotResponse{
      */
     private String mark;
 
+    public PosBody() {
+        super();
+    }
+
     public Integer getLevel() {
         return level;
     }
