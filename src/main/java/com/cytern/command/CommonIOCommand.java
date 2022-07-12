@@ -17,7 +17,7 @@ public class CommonIOCommand {
     public static JSONObject baseCommandHandler (JSONObject commands) {
         //基本消息服务应该分以下几步走
         JSONArray preReturns = CommandExecutedService.preFilterReturn(commands);
-        JSONObject repeatFilterReturn = CommandExecutedService.repeatFilterReturn(preReturns);
+        JSONObject repeatFilterReturn = CommandExecutedService.repeatFilterReturn(preReturns,commands);
         JSONObject newCommand = CommandExecutedService.preReturn(commands, repeatFilterReturn);
         String msg = CommandExecutedService.handleReturnMsg(newCommand, repeatFilterReturn);
 

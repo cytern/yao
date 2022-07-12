@@ -1,5 +1,6 @@
 package com.cytern.service.impl;
 
+import cn.hutool.core.util.RandomUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cytern.exception.RobotException;
@@ -20,8 +21,7 @@ public class CommandExecutedService {
      * 基础处理指令 方法
      */
     public static void handleCommand(JSONObject requestParams) {
-        JSONObject command = requestParams.getJSONObject("command");
-        String activeService = command.getString("activeService");
+        String activeService = requestParams.getString("activeService");
         JSONObject service = RobotCommandLoadService.getInstance().getCommandsMap().get(activeService);
         Method method = (Method) service.get("method");
         JSONObject invoke;
@@ -97,8 +97,45 @@ public class CommandExecutedService {
     /**
      * 重复筛选器
      */
-    public static JSONObject repeatFilterReturn (JSONArray returnWordRules) {
-     return null;
+    public static JSONObject repeatFilterReturn (JSONArray returnWordRules,JSONObject baseCommand) {
+        //如果就剩一个直接返回
+        if (returnWordRules.size() == 1) {
+            baseCommand.put("finalReturn",returnWordRules.getJSONObject(0));
+          return baseCommand;
+      }
+       Integer totalPresent = 0;
+        for (int i = 0; i < returnWordRules.size(); i++) {
+            JSONObject singleObj = (JSONObject) returnWordRules.get(i);
+            JSONArray repeatFilter = singleObj.getJSONArray("repeatFilter");
+            //如果为空直接返回该内容
+            if (repeatFilter == null) {
+                baseCommand.put("finalReturn",singleObj);
+                return baseCommand;
+            }
+            Integer singlePresent = 0;
+            for (int j = 0; j < repeatFilter.size(); j++) {
+                String rawString = repeatFilter.getString(i);
+                String substring = rawString.substring(rawString.indexOf("("), rawString.indexOf(")"));
+                String[] params = substring.split(",");
+                Integer present = FilterLoadService.getInstance().handlerSelectExecuted(baseCommand, handlerRawStringToType(params, rawString.substring(0, rawString.indexOf("("))), params);
+                singlePresent = present + singlePresent;
+            }
+            singleObj.put("chooseRate",singlePresent);
+            totalPresent = totalPresent + singlePresent;
+        }
+        int i = RandomUtil.randomInt(totalPresent);
+        totalPresent = 0;
+        for (int p = 0; p < returnWordRules.size(); p++) {
+            JSONObject o =(JSONObject) returnWordRules.get(p);
+            Integer chooseRate = o.getInteger("chooseRate");
+            if (chooseRate > i) {
+                baseCommand.put("finalReturn",returnWordRules.getJSONObject(p-1));
+                return baseCommand;
+            }
+            totalPresent = totalPresent + chooseRate;
+        }
+        baseCommand.put("finalReturn",returnWordRules.getJSONObject(returnWordRules.size()-1));
+        return baseCommand;
     }
 
     /**

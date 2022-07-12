@@ -20,4 +20,8 @@ public final class Plugin extends JavaPlugin {
 
 
     }
+
+    public static void main(String[] args) {
+        INSTANCE.onEnable();
+    }
 }

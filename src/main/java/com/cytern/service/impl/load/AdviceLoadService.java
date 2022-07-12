@@ -1,10 +1,15 @@
 package com.cytern.service.impl.load;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cytern.aspect.RobotAdvice;
 import com.cytern.aspect.RobotFilter;
+import com.cytern.service.impl.LoggerService;
 import com.cytern.util.ClassUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -64,5 +69,33 @@ public class AdviceLoadService {
             }
         }
         return adviceLoadService;
+    }
+
+
+    /**
+     *  处理增强器
+     */
+    public  JSONObject handlerAdviceExecuted(JSONObject command, String key, String[] params) {
+        Method method = advices.get(key);
+        JSONObject result = new JSONObject();
+        result.put("sender",command.get("sender"));
+        if (method == null) {
+            LoggerService.error("can not find the method of the key :" + key);
+            result.put("msg","哇(脑子里好像出现了个bug)");
+            return result;
+        }
+        ArrayList<Object> paramsObject = new ArrayList<>();
+        paramsObject.add(command);
+        Collections.addAll(paramsObject,params);
+        try {
+            result.putAll((JSONObject)  method.invoke(null, paramsObject));
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            result.put("msg","哇(脑子里好像出现了个bug)");
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+            result.put("msg","哇(脑子里好像出现了个bug)");
+        }
+        return result;
     }
 }

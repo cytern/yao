@@ -1,9 +1,5 @@
 package com.cytern.learn;
 
-import sun.jvm.hotspot.HelloWorld;
-
-import java.util.Locale;
-
 public class StringMethod {
     public static void main(String[] args) {
         String name = "asdasda"; //存字符串 ['a','s','d','a','s','d','a']

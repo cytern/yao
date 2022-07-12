@@ -8,6 +8,7 @@ import com.cytern.util.ClassUtils;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -70,6 +71,9 @@ public class FilterLoadService {
         return filterLoadService;
     }
 
+    /**
+     * 处理筛选器
+     */
     public  boolean handlerFilterExecuted(JSONObject command, String key, String[] params) {
         Method method = filters.get(key);
         if (method == null) {
@@ -78,10 +82,33 @@ public class FilterLoadService {
         }
         ArrayList<Object> paramsObject = new ArrayList<>();
         paramsObject.add(command);
-        paramsObject.addAll(List.of(params));
+        Collections.addAll(paramsObject,params);
         boolean invoke = true;
         try {
              invoke =(boolean) method.invoke(null, paramsObject);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return invoke;
+    }
+
+    /**
+     * 处理筛选器
+     */
+    public  Integer handlerSelectExecuted(JSONObject command, String key, String[] params) {
+        Method method = filters.get(key);
+        if (method == null) {
+            LoggerService.error("can not find the method of the key :" + key);
+            return 0;
+        }
+        ArrayList<Object> paramsObject = new ArrayList<>();
+        paramsObject.add(command);
+        Collections.addAll(paramsObject,params);
+        Integer invoke = 0;
+        try {
+            invoke =(Integer) method.invoke(null, paramsObject);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
