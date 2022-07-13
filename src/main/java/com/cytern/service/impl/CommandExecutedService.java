@@ -4,6 +4,7 @@ import cn.hutool.core.util.RandomUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cytern.exception.RobotException;
+import com.cytern.service.impl.load.AdviceLoadService;
 import com.cytern.service.impl.load.FilterLoadService;
 import com.cytern.service.impl.load.base.RobotCommandLoadService;
 
@@ -142,7 +143,16 @@ public class CommandExecutedService {
      * 前增强器
      */
     public static JSONObject preReturn (JSONObject command,JSONObject singleReturn) {
-      return null;
+        JSONArray preReturn = singleReturn.getJSONArray("preReturn");
+        if (preReturn != null) {
+            for (int i = 0; i < preReturn.size(); i++) {
+                String rawString = preReturn.getString(i);
+                String substring = rawString.substring(rawString.indexOf("("), rawString.indexOf(")"));
+                String[] params = substring.split(",");
+                command = AdviceLoadService.getInstance().handlerAdviceExecuted(command,handlerRawStringToType(params, rawString.substring(0, rawString.indexOf("("))), params);
+            }
+        }
+        return command;
     }
 
     /**
