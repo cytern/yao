@@ -14,7 +14,7 @@ public class AssetsUnzipLoadService extends ModCheckService{
     /**
      * 这位大哥是真正的mod资源加载的消费方 他会解析所有的图片文件 如果需要拆分 会进行拆分
      */
-    public AssetsUnzipLoadService() {
+    private AssetsUnzipLoadService() {
         super();
         //去寻找所有 已经注册的mod中 标记为multiple 的图片 进行再解析
         mods.forEach((k,v) -> {

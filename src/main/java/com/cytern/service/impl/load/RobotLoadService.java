@@ -1,6 +1,9 @@
 package com.cytern.service.impl.load;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.cytern.service.impl.CommandExecutedService;
+import com.cytern.service.impl.load.base.AssetsUnzipLoadService;
 
 import java.util.HashMap;
 
@@ -21,6 +24,24 @@ public final class RobotLoadService {
 
         robotMap = new HashMap<>();
         robotCommand = new HashMap<>();
+        //加载机器人
+        HashMap<String, JSONObject> robotLoader = AssetsUnzipLoadService.getInstance().getMods().get("robotLoader");
+        robotLoader.forEach((key,value) -> {
+            String robotName = value.getJSONObject("config").getString("modName");
+            robotMap.put(robotName,value.getJSONObject("config").getString("modCode"));
+            JSONArray command = value.getJSONObject("main").getJSONArray("robotCommand");
+            for (int i = 0; i < command.size(); i++) {
+                JSONObject singleCommand = command.getJSONObject(i);
+                JSONArray activeWordRules = singleCommand.getJSONArray("activeWordRules");
+
+                if (activeWordRules != null) {
+                    for (int j = 0; j < activeWordRules.size(); j++) {
+                        String ruleString = activeWordRules.getString(j);
+                        robotCommand.put(CommandExecutedService.handlerInputKey(ruleString,singleCommand,j),singleCommand);
+                    }
+                }
+            }
+        });
     }
 
     public static RobotLoadService getInstance() {

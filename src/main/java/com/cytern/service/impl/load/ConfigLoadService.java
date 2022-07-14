@@ -14,6 +14,8 @@ public class ConfigLoadService {
     private ConfigLoadService() {
          config = new HashMap<>();
 
+         config.put("defaultRobotName","阿斯");
+
     }
 
     public  HashMap<String, Object> getConfig() {

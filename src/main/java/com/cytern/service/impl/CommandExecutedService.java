@@ -66,9 +66,6 @@ public class CommandExecutedService {
         return preFilter1;
     }
 
-    public static void main(String[] args) {
-
-    }
 
     /**
      * 处理原生语句
@@ -143,23 +140,58 @@ public class CommandExecutedService {
      * 前增强器
      */
     public static JSONObject preReturn (JSONObject command,JSONObject singleReturn) {
+        singleReturn = command.getJSONObject("finalReturn");
         JSONArray preReturn = singleReturn.getJSONArray("preReturn");
         if (preReturn != null) {
             for (int i = 0; i < preReturn.size(); i++) {
                 String rawString = preReturn.getString(i);
                 String substring = rawString.substring(rawString.indexOf("("), rawString.indexOf(")"));
                 String[] params = substring.split(",");
-                command = AdviceLoadService.getInstance().handlerAdviceExecuted(command,handlerRawStringToType(params, rawString.substring(0, rawString.indexOf("("))), params);
+                command = AdviceLoadService.getInstance().handlerAdviceExecuted(command,handlerRawStringToType(params, rawString.substring(0, rawString.indexOf("("))), params,i);
             }
         }
         return command;
+
     }
 
     /**
      * 处理返回消息
      */
-    public static String handleReturnMsg(JSONObject command,JSONObject singleReturn) {
-    return null;
+    public static String handleReturnMsg(JSONObject command) {
+        JSONObject finalReturn = command.getJSONObject("finalReturn");
+        String returnMsg = finalReturn.getString("returnMsg");
+        if (!returnMsg.contains("《") && !returnMsg.contains("》")) {
+            return returnMsg;
+        }else {
+            StringBuilder finalString = new StringBuilder();
+            String[] split = returnMsg.split("\\《|\\》");
+            for (int i = 0; i < split.length; i++) {
+                String s = split[i];
+                if (s.contains("爻服务") || s.contains("爻入参")) {
+                  if (s.contains(".")) {
+                      String[] split1 = s.split(".");
+                      JSONObject tempObj = new JSONObject(command);
+                      for (int j = 0; j < split1.length; j++) {
+                          String s1 = split1[j];
+                          if (j != split1.length -1) {
+                              tempObj = tempObj.getJSONObject(s1);
+                          }else {
+                              finalString.append(tempObj.getString(s1));
+                          }
+                      }
+                  }
+                }else if (s.contains("爻图片")) {
+
+                }else if (s.contains("爻音频")) {
+
+                }else if (s.contains("爻指令")) {
+
+                }else {
+                    finalString.append(s);
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -168,6 +200,22 @@ public class CommandExecutedService {
     public static void afterReturn (JSONObject singleReturn) {
 
     }
+
+    /**
+     * 处理生入参
+     */
+    public static String handlerInputKey (String rowRules,JSONObject command,int i) {
+       //目前仅处理最末尾数
+        if (rowRules.contains("《")) {
+            //处理rowRules
+            command.put("isNeedAddParams",true);
+            return rowRules.substring(0,rowRules.indexOf("《"));
+
+        }else {
+            return rowRules;
+        }
+    }
+
 
 
 }

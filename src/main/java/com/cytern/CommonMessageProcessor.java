@@ -23,6 +23,10 @@ public class CommonMessageProcessor {
         this.messageEvent = messageEvent;
     }
 
+    public CommonMessageProcessor() {
+        this.messageEvent = null;
+    }
+
     /**
      * 全局消息处理器
      */
@@ -47,8 +51,34 @@ public class CommonMessageProcessor {
         }
     }
 
+    public void handlerMessageEvent (JSONObject rowData) {
+        String sourceMessage = convertMessageEvent(rowData);
+        JSONObject localCommandActiveFilter = localCommandActiveFilter(sourceMessage);
+        //执行完毕后需要返回
+        //判断是否是本地指令
+        if (localCommandActiveFilter != null) {
+            //执行本地指令
+            CommandExecutedService.handleCommand(addEventData(rowData,localCommandActiveFilter));
+        }
+        JSONObject commonMessageActiveFilter = commonMessageActiveFilter(sourceMessage);
+        if (commonMessageActiveFilter != null) {
+            //执行机器人指令
+            CommandExecutedService.handleCommand(addEventData(rowData,commonMessageActiveFilter));
+        }
+
+        if (robotMapActiveFilter(sourceMessage)) {
+            //执行自动ai指令
+
+        }
+    }
+
+    private JSONObject addEventData(JSONObject event,JSONObject commandData) {
+        commandData.put("subject",event.getJSONObject("subject"));
+        return commandData;
+    }
+
     private JSONObject addEventData(MessageEvent event,JSONObject commandData) {
-        commandData.put("sander",event.getSubject());
+        commandData.put("subject",event.getSubject());
         return commandData;
     }
 
@@ -60,6 +90,24 @@ public class CommonMessageProcessor {
      */
     public String convertMessageEvent (MessageEvent event) {
         String sourceMessage = event.getMessage().contentToString();
+        if (sourceMessage.contains("[mirai:image") ||
+                sourceMessage.contains("[mirai:atall]") ||
+                sourceMessage.contains("[mirai:flash") ||
+                sourceMessage.contains("[mirai:file:")
+        ) {
+            throw new RobotException("鉴定为图片消息");
+        }
+        //处理@ 信息
+        if (sourceMessage.contains("[mirai:at")) {
+            sourceMessage = sourceMessage.substring(sourceMessage.indexOf("]") +1,sourceMessage.length());
+        }
+        //处理通用码值
+        sourceMessage = sourceMessage.replace("《机器人名》", (String)ConfigLoadService.getInstance().getConfig().get("defaultRobotName"));
+        return sourceMessage;
+    }
+
+    public String convertMessageEvent (JSONObject event) {
+        String sourceMessage = event.getString("message");
         if (sourceMessage.contains("[mirai:image") ||
                 sourceMessage.contains("[mirai:atall]") ||
                 sourceMessage.contains("[mirai:flash") ||

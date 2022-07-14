@@ -75,10 +75,9 @@ public class AdviceLoadService {
     /**
      *  处理增强器
      */
-    public  JSONObject handlerAdviceExecuted(JSONObject command, String key, String[] params) {
+    public  JSONObject handlerAdviceExecuted(JSONObject command, String key, String[] params,int i) {
         Method method = advices.get(key);
-        JSONObject result = new JSONObject();
-        result.put("sender",command.get("sender"));
+        JSONObject result = new JSONObject(command);
         if (method == null) {
             LoggerService.error("can not find the method of the key :" + key);
             result.put("msg","哇(脑子里好像出现了个bug)");
@@ -88,7 +87,7 @@ public class AdviceLoadService {
         paramsObject.add(command);
         Collections.addAll(paramsObject,params);
         try {
-            result.putAll((JSONObject)  method.invoke(null, paramsObject));
+            result.put("爻服务" + i,  method.invoke(null, paramsObject));
         } catch (IllegalAccessException e) {
             e.printStackTrace();
             result.put("msg","哇(脑子里好像出现了个bug)");
