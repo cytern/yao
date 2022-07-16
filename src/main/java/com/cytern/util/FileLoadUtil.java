@@ -13,7 +13,12 @@ public class FileLoadUtil {
     public static final String userDir;
     public static final String modsUrl;
     static {
-        userDir = System.getProperty("user.dir");
+        if (true) {
+            String property = System.getProperty("user.dir");
+            userDir = property + "/newQQRobot/src/main/resources";
+        }else {
+            userDir = System.getProperty("user.dir");
+        }
         File file = new File(userDir);
         File parentFile = file.getParentFile();
         File[] mods = parentFile.listFiles(new FileFilter() {
