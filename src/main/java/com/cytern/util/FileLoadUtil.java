@@ -15,7 +15,7 @@ public class FileLoadUtil {
     static {
         if (true) {
             String property = System.getProperty("user.dir");
-            userDir = property + "/newQQRobot/src/main/resources";
+            userDir = property + "/src/main/resources/mods";
         }else {
             userDir = System.getProperty("user.dir");
         }
