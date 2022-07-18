@@ -85,7 +85,17 @@ public class FilterLoadService {
         Collections.addAll(paramsObject,params);
         boolean invoke = true;
         try {
-             invoke =(boolean) method.invoke(null, paramsObject);
+            if (params.length == 0) {
+                invoke =(boolean) method.invoke(null, command);
+            }else if(params.length == 1) {
+                invoke =(boolean) method.invoke(null, command,params[0]);
+            }else if (params.length ==2) {
+                invoke =(boolean) method.invoke(null, command,params[0],params[1]);
+            }else if (params.length ==3) {
+                invoke =(boolean) method.invoke(null, command,params[0],params[1],params[2]);
+            }else {
+                invoke = false;
+            }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
@@ -108,7 +118,17 @@ public class FilterLoadService {
         Collections.addAll(paramsObject,params);
         Integer invoke = 0;
         try {
-            invoke =(Integer) method.invoke(null, paramsObject);
+            if (params.length == 0) {
+                invoke =(Integer) method.invoke(null, command);
+            }else if(params.length == 1) {
+                invoke =(Integer) method.invoke(null, command,params[0]);
+            }else if (params.length ==2) {
+                invoke =(Integer) method.invoke(null, command,params[0],params[1]);
+            }else if (params.length ==3) {
+                invoke =(Integer) method.invoke(null, command,params[0],params[1],params[2]);
+            }else {
+                invoke = 0;
+            }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {

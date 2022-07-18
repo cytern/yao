@@ -10,6 +10,7 @@ import com.cytern.service.impl.load.base.RobotCommandLoadService;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 /**
@@ -45,25 +46,31 @@ public class CommandExecutedService {
         if (returnWordRules.size()<1) {
             throw new RobotException("无效的机器编码 无法获取到任何一个可达到的回复");
         }
+        JSONArray returns = new JSONArray();
         if (returnWordRules.size() == 1) {
             return returnWordRules;
         }
-        JSONArray newArray = new JSONArray();
-        JSONArray preFilter1 = (JSONArray) returnWordRules.stream().filter(t -> {
-            JSONObject singleReturn = (JSONObject) t;
+        for (int i = 0; i < returnWordRules.size(); i++) {
+            JSONArray newArray = new JSONArray();
+            JSONObject singleReturn = returnWordRules.getJSONObject(i);
             JSONArray preFilter = singleReturn.getJSONArray("preFilter");
-            for (int i = 0; i < preFilter.size(); i++) {
-                String rawString = preFilter.getString(i);
-                String substring = rawString.substring(rawString.indexOf("("), rawString.indexOf(")"));
+            for (int j = 0; j < preFilter.size(); j++) {
+                String rawString = preFilter.getString(j);
+                String substring = rawString.substring(rawString.indexOf("(")+1, rawString.indexOf(")"));
                 String[] params = substring.split(",");
                 boolean b = FilterLoadService.getInstance().handlerFilterExecuted(command, handlerRawStringToType(params, rawString.substring(0, rawString.indexOf("("))), params);
                 if (!b) {
-                    return false;
+                    newArray.add(preFilter);
                 }
             }
-            return true;
-        }).collect(Collectors.toList());
-        return preFilter1;
+            if (newArray.size() == 0) {
+                returns.add(singleReturn);
+            }
+        }
+        if (returns.size()<1) {
+            throw new RobotException("前置筛选器下没有正确的返回值");
+        }
+        return returns;
     }
 
 
@@ -74,19 +81,15 @@ public class CommandExecutedService {
         StringBuilder finalString = new StringBuilder(base);
         for (int i = 0; i < params.length; i++) {
             String param = params[i];
-            try {
-                Integer.parseInt(param);
-                if (i == 0) {
-                    finalString = finalString.append("Integer");
-                }else {
-                    finalString = finalString.append(",Integer");
-                }
-            } catch (NumberFormatException e) {
-                if (i == 0) {
-                    finalString = finalString.append("String");
-                }else {
-                    finalString = finalString.append(",String");
-                }
+            if (params.length == 1) {
+                finalString.append("(").append("String").append(")");
+            }else if (i == 0) {
+                finalString.append("(");
+                finalString.append("String");
+            }else if (i == params.length -1){
+                finalString.append(",String)");
+            }else {
+                finalString.append(",String");
             }
         }
         return finalString.toString();
@@ -106,7 +109,7 @@ public class CommandExecutedService {
             JSONObject singleObj = (JSONObject) returnWordRules.get(i);
             JSONArray repeatFilter = singleObj.getJSONArray("repeatFilter");
             //如果为空直接返回该内容
-            if (repeatFilter == null) {
+            if (repeatFilter == null|| repeatFilter.size() ==0) {
                 baseCommand.put("finalReturn",singleObj);
                 return baseCommand;
             }
@@ -145,7 +148,7 @@ public class CommandExecutedService {
         if (preReturn != null) {
             for (int i = 0; i < preReturn.size(); i++) {
                 String rawString = preReturn.getString(i);
-                String substring = rawString.substring(rawString.indexOf("("), rawString.indexOf(")"));
+                String substring = rawString.substring(rawString.indexOf("(")+1, rawString.indexOf(")"));
                 String[] params = substring.split(",");
                 command = AdviceLoadService.getInstance().handlerAdviceExecuted(command,handlerRawStringToType(params, rawString.substring(0, rawString.indexOf("("))), params,i);
             }
@@ -160,23 +163,32 @@ public class CommandExecutedService {
     public static String handleReturnMsg(JSONObject command) {
         JSONObject finalReturn = command.getJSONObject("finalReturn");
         String returnMsg = finalReturn.getString("returnMsg");
+        StringBuilder finalString = new StringBuilder();
         if (!returnMsg.contains("《") && !returnMsg.contains("》")) {
             return returnMsg;
         }else {
-            StringBuilder finalString = new StringBuilder();
             String[] split = returnMsg.split("\\《|\\》");
             for (int i = 0; i < split.length; i++) {
                 String s = split[i];
                 if (s.contains("爻服务") || s.contains("爻入参")) {
                   if (s.contains(".")) {
-                      String[] split1 = s.split(".");
+                      String[] split1 = s.split("\\.");
                       JSONObject tempObj = new JSONObject(command);
                       for (int j = 0; j < split1.length; j++) {
                           String s1 = split1[j];
                           if (j != split1.length -1) {
-                              tempObj = tempObj.getJSONObject(s1);
+                              if (tempObj != null && tempObj.containsKey(s1)){
+                                  tempObj = tempObj.getJSONObject(s1);
+                              }else {
+                                  throw new RobotException("解析参数错误 002");
+                              }
+
                           }else {
-                              finalString.append(tempObj.getString(s1));
+                              if (tempObj != null && tempObj.containsKey(s1)){
+                                  finalString.append(tempObj.getString(s1));
+                              }else {
+                                  throw new RobotException("解析参数错误 003");
+                              }
                           }
                       }
                   }
@@ -191,7 +203,7 @@ public class CommandExecutedService {
                 }
             }
         }
-        return null;
+        return finalString.toString();
     }
 
     /**

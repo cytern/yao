@@ -23,7 +23,7 @@ public class AdviceLoadService {
     private AdviceLoadService () {
         HashMap<String, Method> waitAdvice = new HashMap<>();
         try {
-            Class[] classByPackage = ClassUtils.getClassByPackage("com.cytern.filter");
+            Class[] classByPackage = ClassUtils.getClassByPackage("com.cytern.advice");
             try {
                 for (Class singleClass : classByPackage) {
                     //类里是否有加了注解的方法 加了 就并入到里面
@@ -87,7 +87,19 @@ public class AdviceLoadService {
         paramsObject.add(command);
         Collections.addAll(paramsObject,params);
         try {
-            result.put("爻服务" + i,  method.invoke(null, paramsObject));
+            JSONObject invoke;
+            if (params.length == 0) {
+                invoke =(JSONObject) method.invoke(null, command);
+            }else if(params.length == 1) {
+                invoke =(JSONObject) method.invoke(null, command,params[0]);
+            }else if (params.length ==2) {
+                invoke =(JSONObject) method.invoke(null, command,params[0],params[1]);
+            }else if (params.length ==3) {
+                invoke =(JSONObject) method.invoke(null, command,params[0],params[1],params[2]);
+            }else {
+                invoke = new JSONObject();
+            }
+            result.put("爻服务" + (i+1),  invoke);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
             result.put("msg","哇(脑子里好像出现了个bug)");
