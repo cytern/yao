@@ -74,11 +74,13 @@ public class CommonMessageProcessor {
 
     private JSONObject addEventData(JSONObject event,JSONObject commandData) {
         commandData.put("subject",event.getJSONObject("subject"));
+        commandData.put("qqId",event.getJSONObject("qqId"));
         return commandData;
     }
 
     private JSONObject addEventData(MessageEvent event,JSONObject commandData) {
         commandData.put("subject",event.getSubject());
+        commandData.put("qqId",event.getSender().getId());
         return commandData;
     }
 

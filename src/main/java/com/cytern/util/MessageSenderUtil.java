@@ -1,6 +1,7 @@
 package com.cytern.util;
 
 import net.mamoe.mirai.contact.Contact;
+import net.mamoe.mirai.contact.User;
 
 /**
  * 信息发送工具
@@ -14,4 +15,11 @@ public class MessageSenderUtil {
 //        subject.sendMessage(finalMsg);
         System.out.println(finalMsg);
     }
-}
+
+    /**
+     * 处理mirai码
+     */
+    public static String uploadAndReplaceImage(String rawCode, User user) {
+         return null;
+    }
+ }
