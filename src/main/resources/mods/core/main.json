@@ -2,7 +2,7 @@
     "tencent":{
         "secretId":"",
         "secretKey":"",
-        "defultVoice":{
+        "defaultVoice":{
            "volume": "4F",
            "speed":"-0.7F",
            "voiceType":"101016L",
@@ -11,8 +11,10 @@
     },
     "dataService":{
         "qqId":"",
-        "key":""
+        "key":"",
+      "requestBaseUrl": ""
     },
     "masterQqId": "2477185748",
-    "defultActiveRobot": "helly"
+    "defaultActiveRobot": "helly",
+    "defaultRobotName" : "阿斯"
 }

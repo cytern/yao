@@ -47,7 +47,13 @@
             ]
         },
         {
-
+            "activeWordRules" : [ "我好喜欢你呀 爻","爻 我好喜欢你","爻 我爱你","爻 我好喜欢"],
+            "activeService": "通用消息",
+            "returnWordRules" : [
+                {
+                    "returnMsg" : "我也喜欢你"
+                }
+            ]
         }
     ]
 
