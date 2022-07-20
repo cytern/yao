@@ -6,6 +6,7 @@ import com.cytern.service.impl.CommandExecutedService;
 import com.cytern.service.impl.load.CommandLoadService;
 import com.cytern.service.impl.load.ConfigLoadService;
 import com.cytern.service.impl.load.RobotLoadService;
+import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
@@ -19,8 +20,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class CommonMessageProcessor {
     private  String sourceMessage;
     private final MessageEvent messageEvent;
+
+    private Bot currentRobot;
     public CommonMessageProcessor(MessageEvent messageEvent) {
         this.messageEvent = messageEvent;
+        currentRobot = messageEvent.getBot();
     }
 
     public CommonMessageProcessor() {
@@ -81,6 +85,7 @@ public class CommonMessageProcessor {
     private JSONObject addEventData(MessageEvent event,JSONObject commandData) {
         commandData.put("subject",event.getSubject());
         commandData.put("qqId",event.getSender().getId());
+        commandData.put("currentBot",currentRobot);
         return commandData;
     }
 

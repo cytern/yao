@@ -4,9 +4,12 @@ import cn.hutool.core.util.RandomUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cytern.exception.RobotException;
+import com.cytern.pojo.ErrorCode;
 import com.cytern.service.impl.load.AdviceLoadService;
 import com.cytern.service.impl.load.FilterLoadService;
 import com.cytern.service.impl.load.base.RobotCommandLoadService;
+import com.cytern.util.MessageSenderUtil;
+import net.mamoe.mirai.Bot;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -180,20 +183,21 @@ public class CommandExecutedService {
                               if (tempObj != null && tempObj.containsKey(s1)){
                                   tempObj = tempObj.getJSONObject(s1);
                               }else {
-                                  throw new RobotException("解析参数错误 002");
+                                  throw new RobotException(ErrorCode.PARAM_SPLICE_NOT_RIGHT.getMsg(1));
                               }
 
                           }else {
                               if (tempObj != null && tempObj.containsKey(s1)){
                                   finalString.append(tempObj.getString(s1));
                               }else {
-                                  throw new RobotException("解析参数错误 003");
+                                  throw new RobotException(ErrorCode.PARAM_SPLICE_NOT_RIGHT.getMsg(2));
                               }
                           }
                       }
                   }
                 }else if (s.contains("爻图片")) {
-
+                    String miraiCode = MessageSenderUtil.uploadAndReplaceImage(s, (Bot) command.get("currentBot"));
+                    finalString.append(miraiCode);
                 }else if (s.contains("爻音频")) {
 
                 }else if (s.contains("爻指令")) {

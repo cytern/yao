@@ -47,11 +47,11 @@
             ]
         },
         {
-            "activeWordRules" : [ "我好喜欢你呀 爻","爻 我好喜欢你","爻 我爱你","爻 我好喜欢"],
+            "activeWordRules" : [ "我好喜欢你海莉","海莉我好喜欢你","海莉我爱你","海莉我好喜欢"],
             "activeService": "通用消息",
             "returnWordRules" : [
                 {
-                    "returnMsg" : "我也喜欢你"
+                    "returnMsg" : "我也喜欢你  \n 《爻图片.HellyRobot.Normal_r2_c0.png》"
                 }
             ]
         }

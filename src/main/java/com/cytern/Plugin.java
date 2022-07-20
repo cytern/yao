@@ -3,6 +3,7 @@ package com.cytern;
 import com.alibaba.fastjson.JSONObject;
 import com.cytern.service.impl.load.base.RobotCommandLoadService;
 import com.cytern.service.impl.load.base.ModLoadService;
+import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
 import net.mamoe.mirai.contact.Member;
