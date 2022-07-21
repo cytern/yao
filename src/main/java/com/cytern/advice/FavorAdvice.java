@@ -1,8 +1,10 @@
 package com.cytern.advice;
 
+import cn.hutool.core.util.RandomUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.cytern.aspect.RobotAdvice;
 import com.cytern.network.service.FavorFeign;
+import com.cytern.util.MathUtil;
 
 
 public class FavorAdvice {
@@ -23,8 +25,9 @@ public class FavorAdvice {
         JSONObject jsonObject = new JSONObject();
         Integer minNum = Integer.valueOf(min);
         Integer maxNum = Integer.valueOf(max);
-
-        Integer level = FavorFeign.getFavor(Integer.valueOf(minNum), command.getString("qqId"));
+        Double aDouble = Double.valueOf(factor);
+        Integer tempLevel = MathUtil.randomFactorInt(minNum, maxNum, aDouble);
+        Integer level = FavorFeign.getFavor(tempLevel, command.getString("qqId"));
         jsonObject.put("好感度",level);
         return jsonObject;
     }
