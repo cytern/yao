@@ -13,7 +13,7 @@ public class FileLoadUtil {
     public static final String userDir;
     public static final String modsUrl;
     static {
-        if (true) {
+        if (false) {
             String property = System.getProperty("user.dir");
             userDir = property + "/src/main/resources/mods";
         }else {
