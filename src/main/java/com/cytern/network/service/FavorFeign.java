@@ -3,6 +3,7 @@ package com.cytern.network.service;
 import com.alibaba.fastjson.JSONObject;
 import com.cytern.exception.RobotException;
 import com.cytern.network.util.CommonHttpUtil;
+import com.cytern.pojo.ErrorCode;
 import com.cytern.service.impl.load.ConfigLoadService;
 
 /**
@@ -23,7 +24,7 @@ public class FavorFeign {
         if (result != null && result.getBoolean("code")) {
            return result;
         }else {
-            throw new RobotException("无效的网络返回值 1001");
+            throw new RobotException(ErrorCode.NET_WORK_RETURN_ERROR.getMsg(1));
         }
     }
 

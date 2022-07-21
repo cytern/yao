@@ -24,8 +24,7 @@ public class MessageSenderUtil {
      * 基础信息发送
      */
     public static void normalSend(Contact subject,String finalMsg) {
-//        subject.sendMessage(finalMsg);
-        System.out.println(finalMsg);
+        subject.sendMessage(finalMsg);
     }
 
     /**

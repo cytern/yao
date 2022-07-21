@@ -30,7 +30,7 @@ public final class Plugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-//        GlobalEventChannel.INSTANCE.subscribeAlways(MessageEvent.class, Plugin::accept);
+        GlobalEventChannel.INSTANCE.subscribeAlways(MessageEvent.class, Plugin::accept);
     }
 
 }
