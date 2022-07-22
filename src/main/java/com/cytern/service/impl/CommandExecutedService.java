@@ -10,6 +10,10 @@ import com.cytern.service.impl.load.FilterLoadService;
 import com.cytern.service.impl.load.base.RobotCommandLoadService;
 import com.cytern.util.MessageSenderUtil;
 import net.mamoe.mirai.Bot;
+import net.mamoe.mirai.message.data.Image;
+import net.mamoe.mirai.message.data.MessageChain;
+import net.mamoe.mirai.message.data.MessageChainBuilder;
+import net.mamoe.mirai.message.data.PlainText;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -27,15 +31,16 @@ public class CommandExecutedService {
      */
     public static void handleCommand(JSONObject requestParams) {
         String activeService = requestParams.getString("activeService");
+        LoggerService.info("准备要获取服务:" + activeService);
         JSONObject service = RobotCommandLoadService.getInstance().getCommandsMap().get(activeService);
-        Method method = (Method) service.get("method");
-        JSONObject invoke;
-        try {
-             invoke = (JSONObject) method.invoke(null, requestParams);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
+        if (service!= null) {
+            Method method = (Method) service.get("method");
+            JSONObject invoke;
+            try {
+                 invoke = (JSONObject) method.invoke(null, requestParams);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
         }
 
 
@@ -163,12 +168,12 @@ public class CommandExecutedService {
     /**
      * 处理返回消息
      */
-    public static String handleReturnMsg(JSONObject command) {
+    public static MessageChain handleReturnMsg(JSONObject command) {
         JSONObject finalReturn = command.getJSONObject("finalReturn");
         String returnMsg = finalReturn.getString("returnMsg");
-        StringBuilder finalString = new StringBuilder();
+        MessageChainBuilder chain = new MessageChainBuilder();
         if (!returnMsg.contains("《") && !returnMsg.contains("》")) {
-            return returnMsg;
+            return chain.append(returnMsg).build();
         }else {
             String[] split = returnMsg.split("\\《|\\》");
             for (int i = 0; i < split.length; i++) {
@@ -188,7 +193,7 @@ public class CommandExecutedService {
 
                           }else {
                               if (tempObj != null && tempObj.containsKey(s1)){
-                                  finalString.append(tempObj.getString(s1));
+                                  chain.append(tempObj.getString(s1));
                               }else {
                                   throw new RobotException(ErrorCode.PARAM_SPLICE_NOT_RIGHT.getMsg(2));
                               }
@@ -197,17 +202,17 @@ public class CommandExecutedService {
                   }
                 }else if (s.contains("爻图片")) {
                     String miraiCode = MessageSenderUtil.uploadAndReplaceImage(s, (Bot) command.get("currentBot"));
-                    finalString.append(miraiCode);
+                    chain.append(Image.fromId(miraiCode));
                 }else if (s.contains("爻音频")) {
 
                 }else if (s.contains("爻指令")) {
 
                 }else {
-                    finalString.append(s);
+                    chain.append(s);
                 }
             }
         }
-        return finalString.toString();
+        return chain.build();
     }
 
     /**

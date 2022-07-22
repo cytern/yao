@@ -1,6 +1,8 @@
 package com.cytern;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cytern.exception.RobotException;
+import com.cytern.service.impl.LoggerService;
 import com.cytern.service.impl.load.base.RobotCommandLoadService;
 import com.cytern.service.impl.load.base.ModLoadService;
 import net.mamoe.mirai.Bot;
@@ -24,8 +26,14 @@ public final class Plugin extends JavaPlugin {
     }
 
     private static void accept(MessageEvent event) {
-        CommonMessageProcessor commonMessageProcessor = new CommonMessageProcessor(event);
-        commonMessageProcessor.handlerMessageEvent();
+        try {
+            CommonMessageProcessor commonMessageProcessor = new CommonMessageProcessor(event);
+            commonMessageProcessor.handlerMessageEvent();
+        } catch (RobotException e) {
+            LoggerService.info("机器人服务错误: " +e.getMessage());
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

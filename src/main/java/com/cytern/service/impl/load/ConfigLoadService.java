@@ -17,6 +17,8 @@ public class ConfigLoadService {
 
     private final JSONObject tencent;
 
+    private final String defaultActiveRobot;
+
     private static volatile ConfigLoadService configLoadService;
 
     /**
@@ -26,11 +28,11 @@ public class ConfigLoadService {
         HashMap<String, JSONObject> configLoader = AssetsUnzipLoadService.getInstance().getMods().get("configLoader");
         JSONObject coreConfig = configLoader.get("Core");
         config = new HashMap<>(coreConfig.getInnerMap());
-        defaultRobotName = coreConfig.getString("defaultRobotName");
-        masterQqId = coreConfig.getString("masterQqId");
-        dataService = coreConfig.getJSONObject("dataService");
-        tencent = coreConfig.getJSONObject("tencent");
-
+        defaultRobotName = coreConfig.getJSONObject("main").getString("defaultRobotName");
+        masterQqId = coreConfig.getJSONObject("main").getString("masterQqId");
+        dataService = coreConfig.getJSONObject("main").getJSONObject("dataService");
+        tencent = coreConfig.getJSONObject("main").getJSONObject("tencent");
+        defaultActiveRobot = coreConfig.getJSONObject("main").getString("defaultActiveRobot");
     }
 
     public  HashMap<String, Object> getConfig() {
@@ -65,4 +67,8 @@ public class ConfigLoadService {
         return tencent;
     }
 
+
+    public String getDefaultActiveRobot() {
+        return defaultActiveRobot;
+    }
 }

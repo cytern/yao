@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.cytern.exception.RobotException;
 import com.cytern.network.util.CommonHttpUtil;
 import com.cytern.pojo.ErrorCode;
+import com.cytern.service.impl.LoggerService;
 import com.cytern.service.impl.load.ConfigLoadService;
 
 /**
@@ -16,12 +17,12 @@ public class FavorFeign {
     public static JSONObject favorEdit(Integer level,String qqId) {
         JSONObject params = new JSONObject();
         params.put("businessCode",1);
-        params.put("robotCode", ConfigLoadService.getInstance().getConfig().get("defaultActiveRobot"));
+        params.put("robotCode", ConfigLoadService.getInstance().getDefaultActiveRobot());
         params.put("qqId",qqId);
         params.put("level",level);
         params.put("opType","update");
         JSONObject result = CommonHttpUtil.postHttpService(favorUrl, params);
-        if (result != null && result.getBoolean("code")) {
+        if (result != null && result.getInteger("code").equals(200)) {
            return result;
         }else {
             throw new RobotException(ErrorCode.NET_WORK_RETURN_ERROR.getMsg(1));

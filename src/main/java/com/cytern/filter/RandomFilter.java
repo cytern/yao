@@ -6,6 +6,7 @@ import com.cytern.aspect.RobotFilter;
 /**
  * 随机筛选器
  */
+@RobotFilter(name = "随机筛选器")
 public class RandomFilter {
 
     @RobotFilter(name = "简单随机")

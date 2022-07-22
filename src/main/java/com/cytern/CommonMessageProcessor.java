@@ -3,6 +3,7 @@ package com.cytern;
 import com.alibaba.fastjson.JSONObject;
 import com.cytern.exception.RobotException;
 import com.cytern.service.impl.CommandExecutedService;
+import com.cytern.service.impl.LoggerService;
 import com.cytern.service.impl.load.CommandLoadService;
 import com.cytern.service.impl.load.ConfigLoadService;
 import com.cytern.service.impl.load.RobotLoadService;
@@ -55,32 +56,6 @@ public class CommonMessageProcessor {
         }
     }
 
-    public void handlerMessageEvent (JSONObject rowData) {
-        String sourceMessage = convertMessageEvent(rowData);
-        JSONObject localCommandActiveFilter = localCommandActiveFilter(sourceMessage);
-        //执行完毕后需要返回
-        //判断是否是本地指令
-        if (localCommandActiveFilter != null) {
-            //执行本地指令
-            CommandExecutedService.handleCommand(addEventData(rowData,localCommandActiveFilter));
-        }
-        JSONObject commonMessageActiveFilter = commonMessageActiveFilter(sourceMessage);
-        if (commonMessageActiveFilter != null) {
-            //执行机器人指令
-            CommandExecutedService.handleCommand(addEventData(rowData,commonMessageActiveFilter));
-        }
-
-        if (robotMapActiveFilter(sourceMessage)) {
-            //执行自动ai指令
-
-        }
-    }
-
-    private JSONObject addEventData(JSONObject event,JSONObject commandData) {
-        commandData.put("subject",event.getJSONObject("subject"));
-        commandData.put("qqId",event.getJSONObject("qqId"));
-        return commandData;
-    }
 
     private JSONObject addEventData(MessageEvent event,JSONObject commandData) {
         commandData.put("subject",event.getSubject());
@@ -109,7 +84,7 @@ public class CommonMessageProcessor {
             sourceMessage = sourceMessage.substring(sourceMessage.indexOf("]") +1,sourceMessage.length());
         }
         //处理通用码值
-        sourceMessage = sourceMessage.replace("《机器人名》", (String)ConfigLoadService.getInstance().getConfig().get("defaultRobotName"));
+        sourceMessage = sourceMessage.replace("《机器人名》", ConfigLoadService.getInstance().getDefaultRobotName());
         return sourceMessage;
     }
 

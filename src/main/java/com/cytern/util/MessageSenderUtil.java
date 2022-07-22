@@ -1,15 +1,19 @@
 package com.cytern.util;
 
 import cn.hutool.core.io.FileUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.cytern.Plugin;
 import com.cytern.exception.RobotException;
 import com.cytern.pojo.ErrorCode;
+import com.cytern.service.impl.LoggerService;
 import com.cytern.service.impl.load.base.AssetsUnzipLoadService;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.contact.Contact;
+import net.mamoe.mirai.contact.ContactList;
 import net.mamoe.mirai.contact.Friend;
 import net.mamoe.mirai.contact.User;
 import net.mamoe.mirai.message.data.Image;
+import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.utils.ExternalResource;
 
 import java.io.File;
@@ -23,7 +27,7 @@ public class MessageSenderUtil {
     /**
      * 基础信息发送
      */
-    public static void normalSend(Contact subject,String finalMsg) {
+    public static void normalSend(Contact subject, MessageChain finalMsg) {
         subject.sendMessage(finalMsg);
     }
 
@@ -34,11 +38,11 @@ public class MessageSenderUtil {
         //查看图片缓存是否有缓存的imageId
         String imageId = TimedCachedUtil.getInstance().getImageCache().get(rawCode);
         if (imageId != null) {
-            return  "[mirai:image:" + imageId + "]";
+            return  imageId;
         }else {
             //从资产中获取
             String[] split = rawCode.split("\\.");
-            if (split.length != 3) {
+            if (split.length != 4) {
                 throw new RobotException(ErrorCode.IMAGE_UPLOAD_CANT_FOUND_SOURCE.getMsg());
             }
             HashMap<String, HashMap<String, String>> assets = AssetsUnzipLoadService.getInstance().getAssets();
@@ -46,16 +50,23 @@ public class MessageSenderUtil {
             if (stringStringHashMap == null) {
                 throw new RobotException(ErrorCode.IMAGE_UPLOAD_CANT_FOUND_PATH.getMsg());
             }
-            String finalPath = stringStringHashMap.get(split[2]);
+            String fileName = split[2] + "." + split[3];
+            String finalPath = stringStringHashMap.get(fileName);
             File file = FileUtil.file(finalPath);
             if (!file.exists()) {
                 throw new RobotException(ErrorCode.IMAGE_UPLOAD_CANT_FOUND_PATH.getMsg());
             }
-            Friend friend = currentRobot.getFriends().get(0);
-            Image image = ExternalResource.uploadAsImage(file, friend);
+            ContactList<Friend> friends = currentRobot.getFriends();
+            Image image = null;
+            for (Friend friend : friends) {
+                if (friend!= null) {
+                    image = ExternalResource.uploadAsImage(file, friend);
+                    break;
+                }
+            }
             //先存缓存
             TimedCachedUtil.getInstance().getImageCache().put(rawCode,image.getImageId());
-            return  "[mirai:image:" + image.getImageId() + "]";
+            return  image.getImageId();
         }
     }
  }

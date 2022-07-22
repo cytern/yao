@@ -19,8 +19,7 @@ public class FileLoadUtil {
         }else {
             userDir = System.getProperty("user.dir");
         }
-        File file = new File(userDir);
-        File parentFile = file.getParentFile();
+        File parentFile = new File(userDir);
         File[] mods = parentFile.listFiles(new FileFilter() {
             @Override
             public boolean accept(File pathname) {

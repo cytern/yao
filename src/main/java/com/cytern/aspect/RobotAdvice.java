@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
  * 标记为机器人增强器
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+@Target({ElementType.METHOD,ElementType.TYPE})
 public @interface RobotAdvice {
     String name();
 }

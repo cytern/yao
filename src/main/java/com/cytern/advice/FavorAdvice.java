@@ -6,7 +6,7 @@ import com.cytern.aspect.RobotAdvice;
 import com.cytern.network.service.FavorFeign;
 import com.cytern.util.MathUtil;
 
-
+@RobotAdvice(name = "好感度增强器")
 public class FavorAdvice {
     @RobotAdvice(name = "好感度增加")
     public static JSONObject favorFilter(JSONObject command,String addNum) {

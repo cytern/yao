@@ -11,6 +11,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * 增强器加载器
@@ -23,7 +24,8 @@ public class AdviceLoadService {
     private AdviceLoadService () {
         HashMap<String, Method> waitAdvice = new HashMap<>();
         try {
-            Class[] classByPackage = ClassUtils.getClassByPackage("com.cytern.advice");
+
+            Set<Class<?>> classByPackage = ClassUtils.getClasses("com.cytern.advice");
             try {
                 for (Class singleClass : classByPackage) {
                     //类里是否有加了注解的方法 加了 就并入到里面

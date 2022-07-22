@@ -7,6 +7,7 @@ import com.cytern.network.service.FavorFeign;
 /**
  * 好感度筛选器
  */
+@RobotFilter(name = "好感度筛选器")
 public class FavorFilter {
 
     @RobotFilter(name = "最小好感度")

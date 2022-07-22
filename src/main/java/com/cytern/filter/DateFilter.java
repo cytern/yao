@@ -9,6 +9,7 @@ import java.util.Date;
 /**
  * 日期筛选器
  */
+@RobotFilter(name = "时间筛选器")
 public class DateFilter {
     private static final int USER_BIRTHDAY = 1; //用户生日
     private static final int MORNING = 1001; //早上 6:00 - 10:00

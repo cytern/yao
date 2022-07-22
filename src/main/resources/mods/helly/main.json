@@ -29,17 +29,17 @@
      },
     "robotCommand": [
         {
-            "activeWordRules" : [ "阿斯我的好感度","阿斯我的好感度是"],
+            "activeWordRules" : [ "海莉我的好感度","海莉我的好感度是"],
             "activeService": "通用消息",
             "returnWordRules" : [
                 {
-                    "preFilter" : ["最小好感度(10)"],
+                    "preFilter" : ["最小好感度(0)"],
                     "repeatFilter": [],
                     "preReturn": ["好感度增加(0)"],
                     "returnMsg" : "阿斯对你的好感度是《爻服务1.好感度》"
                 },
                 {
-                    "preFilter" : ["最小好感度(10)"],
+                    "preFilter" : ["最小好感度(100)"],
                     "repeatFilter": [],
                     "preReturn": ["好感度增加(0)"],
                     "returnMsg" : "我什么好感度你不知道吗"
@@ -47,7 +47,7 @@
             ]
         },
         {
-            "activeWordRules" : [ "我好喜欢你海莉","海莉我好喜欢你","海莉我爱你","海莉我好喜欢"],
+            "activeWordRules" : [ "我好喜欢你 阿斯","海莉我好喜欢你","海莉我爱你","海莉我好喜欢"],
             "activeService": "通用消息",
             "returnWordRules" : [
                 {

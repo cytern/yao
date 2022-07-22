@@ -7,10 +7,7 @@ import com.cytern.util.ClassUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * 筛选器加载器
@@ -21,7 +18,7 @@ public class FilterLoadService {
     private FilterLoadService() {
         HashMap<String, Method> waitFilter = new HashMap<>();
         try {
-            Class[] classByPackage = ClassUtils.getClassByPackage("com.cytern.filter");
+            Set<Class<?>> classByPackage = ClassUtils.getClasses("com.cytern.filter");
             try {
                 for (Class singleClass : classByPackage) {
                     //类里是否有加了注解的方法 加了 就并入到里面
