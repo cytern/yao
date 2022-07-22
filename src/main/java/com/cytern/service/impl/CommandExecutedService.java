@@ -116,10 +116,9 @@ public class CommandExecutedService {
         for (int i = 0; i < returnWordRules.size(); i++) {
             JSONObject singleObj = (JSONObject) returnWordRules.get(i);
             JSONArray repeatFilter = singleObj.getJSONArray("repeatFilter");
-            //如果为空直接返回该内容
+            //如果为空 那就不要这条
             if (repeatFilter == null|| repeatFilter.size() ==0) {
-                baseCommand.put("finalReturn",singleObj);
-                return baseCommand;
+               continue;
             }
             Integer singlePresent = 0;
             for (int j = 0; j < repeatFilter.size(); j++) {
@@ -207,6 +206,8 @@ public class CommandExecutedService {
 
                 }else if (s.contains("爻指令")) {
 
+                }else if (s.contains("爻昵称")){
+                    chain.append(command.getString("qqName"));
                 }else {
                     chain.append(s);
                 }

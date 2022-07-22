@@ -61,6 +61,7 @@ public class CommonMessageProcessor {
         commandData.put("subject",event.getSubject());
         commandData.put("qqId",event.getSender().getId());
         commandData.put("currentBot",currentRobot);
+        commandData.put("qqName",event.getSender().getNick());
         return commandData;
     }
 
