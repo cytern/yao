@@ -126,9 +126,8 @@ public class FilterLoadService {
             }else {
                 invoke = 0;
             }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            LoggerService.error(e.getMessage());
             e.printStackTrace();
         }
         return invoke;

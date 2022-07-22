@@ -3,7 +3,9 @@ package com.cytern.service.impl.load.base;
 import cn.hutool.core.io.FileUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.cytern.exception.RobotException;
 import com.cytern.pojo.SimpleImageSub;
+import com.cytern.service.impl.LoggerService;
 import com.cytern.util.RobotImageUtil;
 
 import java.util.HashMap;
@@ -35,8 +37,8 @@ public class AssetsUnzipLoadService extends ModCheckService{
                             }
                         }
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (RobotException e) {
+                    LoggerService.error(e.getMessage());
                 }
             });
         });
