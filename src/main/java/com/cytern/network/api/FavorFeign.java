@@ -1,10 +1,9 @@
-package com.cytern.network.service;
+package com.cytern.network.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cytern.exception.RobotException;
 import com.cytern.network.util.CommonHttpUtil;
 import com.cytern.pojo.ErrorCode;
-import com.cytern.service.impl.LoggerService;
 import com.cytern.service.impl.load.ConfigLoadService;
 
 /**
@@ -29,9 +28,6 @@ public class FavorFeign {
         }
     }
 
-    public static Integer getFavor(Integer level,String qqId) {
-        JSONObject result = favorEdit(level, qqId);
-        return result.getJSONObject("data").getInteger("level");
-    }
+
 
 }

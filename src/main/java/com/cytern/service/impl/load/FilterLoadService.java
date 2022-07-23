@@ -82,7 +82,7 @@ public class FilterLoadService {
         Collections.addAll(paramsObject,params);
         boolean invoke = true;
         try {
-            if (params.length == 0) {
+            if (params.length == 0 || (params.length == 1&& params[0].equals("") )) {
                 invoke =(boolean) method.invoke(null, command);
             }else if(params.length == 1) {
                 invoke =(boolean) method.invoke(null, command,params[0]);
@@ -115,7 +115,7 @@ public class FilterLoadService {
         Collections.addAll(paramsObject,params);
         Integer invoke = 0;
         try {
-            if (params.length == 0) {
+            if (params.length == 0 || (params.length == 1&& params[0].equals("") )) {
                 invoke =(Integer) method.invoke(null, command);
             }else if(params.length == 1) {
                 invoke =(Integer) method.invoke(null, command,params[0]);

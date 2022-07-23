@@ -90,7 +90,7 @@ public class AdviceLoadService {
         Collections.addAll(paramsObject,params);
         try {
             JSONObject invoke;
-            if (params.length == 0) {
+            if (params.length == 0 || (params.length == 1&& params[0].equals("") )) {
                 invoke =(JSONObject) method.invoke(null, command);
             }else if(params.length == 1) {
                 invoke =(JSONObject) method.invoke(null, command,params[0]);

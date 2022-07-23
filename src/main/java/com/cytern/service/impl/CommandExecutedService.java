@@ -13,12 +13,10 @@ import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.message.data.Image;
 import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
-import net.mamoe.mirai.message.data.PlainText;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.stream.Collectors;
+import java.util.Collections;
 
 /**
  * 指令执行服务
@@ -59,19 +57,28 @@ public class CommandExecutedService {
             return returnWordRules;
         }
         for (int i = 0; i < returnWordRules.size(); i++) {
-            JSONArray newArray = new JSONArray();
+            JSONArray unPassArray = new JSONArray();
             JSONObject singleReturn = returnWordRules.getJSONObject(i);
             JSONArray preFilter = singleReturn.getJSONArray("preFilter");
-            for (int j = 0; j < preFilter.size(); j++) {
-                String rawString = preFilter.getString(j);
-                String substring = rawString.substring(rawString.indexOf("(")+1, rawString.indexOf(")"));
-                String[] params = substring.split(",");
-                boolean b = FilterLoadService.getInstance().handlerFilterExecuted(command, handlerRawStringToType(params, rawString.substring(0, rawString.indexOf("("))), params);
-                if (!b) {
-                    newArray.add(preFilter);
+            if (preFilter!= null) {
+                for (int j = 0; j < preFilter.size(); j++) {
+                    String rawString = preFilter.getString(j);
+                    if (rawString.equals("")) {
+                        continue;
+                    }
+                    String substring = rawString.substring(rawString.indexOf("(")+1, rawString.indexOf(")"));
+                    String[] params = substring.split(",");
+                    boolean b = FilterLoadService.getInstance().handlerFilterExecuted(command, handlerRawStringToType(params, rawString.substring(0, rawString.indexOf("("))), params);
+                    if (!b) {
+                        unPassArray.add(preFilter);
+                        break;
+                    }
                 }
+            }else {
+                //如果前置筛选器为空 直接返回当前返回
+                return new JSONArray(Collections.singletonList(singleReturn));
             }
-            if (newArray.size() == 0) {
+            if (unPassArray.size() == 0) {
                 returns.add(singleReturn);
             }
         }
@@ -82,6 +89,7 @@ public class CommandExecutedService {
     }
 
 
+
     /**
      * 处理原生语句
      */
@@ -89,9 +97,12 @@ public class CommandExecutedService {
         StringBuilder finalString = new StringBuilder(base);
         for (int i = 0; i < params.length; i++) {
             String param = params[i];
-            if (params.length == 1) {
+            if (params.length == 1 && !params[0].equals("")) {
                 finalString.append("(").append("String").append(")");
-            }else if (i == 0) {
+            }else if (params.length == 1) {
+                finalString.append("(").append(")");
+            }
+            else if (i == 0) {
                 finalString.append("(");
                 finalString.append("String");
             }else if (i == params.length -1){
@@ -116,9 +127,10 @@ public class CommandExecutedService {
         for (int i = 0; i < returnWordRules.size(); i++) {
             JSONObject singleObj = (JSONObject) returnWordRules.get(i);
             JSONArray repeatFilter = singleObj.getJSONArray("repeatFilter");
-            //如果为空 那就不要这条
+            //如果为空 那就要这条
             if (repeatFilter == null|| repeatFilter.size() ==0) {
-               continue;
+                baseCommand.put("finalReturn",singleObj);
+                return baseCommand;
             }
             Integer singlePresent = 0;
             for (int j = 0; j < repeatFilter.size(); j++) {

@@ -3,6 +3,7 @@ package com.cytern.filter;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cytern.aspect.RobotFilter;
+import com.cytern.service.impl.LoggerService;
 import com.cytern.service.impl.load.ConfigLoadService;
 
 @RobotFilter(name = "主人筛选器")

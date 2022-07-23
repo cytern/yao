@@ -1,17 +1,13 @@
 package com.cytern.util;
 
 import cn.hutool.core.io.FileUtil;
-import com.alibaba.fastjson.JSONObject;
-import com.cytern.Plugin;
 import com.cytern.exception.RobotException;
 import com.cytern.pojo.ErrorCode;
-import com.cytern.service.impl.LoggerService;
 import com.cytern.service.impl.load.base.AssetsUnzipLoadService;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.contact.ContactList;
 import net.mamoe.mirai.contact.Friend;
-import net.mamoe.mirai.contact.User;
 import net.mamoe.mirai.message.data.Image;
 import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.utils.ExternalResource;
@@ -36,7 +32,7 @@ public class MessageSenderUtil {
      */
     public static String uploadAndReplaceImage(String rawCode, Bot currentRobot) {
         //查看图片缓存是否有缓存的imageId
-        String imageId = TimedCachedUtil.getInstance().getImageCache().get(rawCode);
+        String imageId = RobotCachedUtil.getInstance().getImageCache().get(rawCode);
         if (imageId != null) {
             return  imageId;
         }else {
@@ -65,7 +61,7 @@ public class MessageSenderUtil {
                 }
             }
             //先存缓存
-            TimedCachedUtil.getInstance().getImageCache().put(rawCode,image.getImageId());
+            RobotCachedUtil.getInstance().getImageCache().put(rawCode,image.getImageId());
             return  image.getImageId();
         }
     }
