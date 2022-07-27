@@ -29,9 +29,20 @@
             "itemType": "食物",
             "itemImgName": "狗粮.png",
             "itemDes": "狗粮 给狗吃的粮",
-            "itemPop": {}
-         }
+            "itemPop": {
+               "randomWeight": "100"
+            }
+         },
 
+         {
+            "itemName": "空",
+            "itemType": "空",
+            "itemImgName": "",
+            "itemDes": "空 就是啥也没有",
+            "itemPop": {
+               "forceChance": "30"
+            }
+         }
       ]
    }
 }
