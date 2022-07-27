@@ -15,12 +15,10 @@ import java.util.HashMap;
 public final class ItemLoadService {
     private final HashMap<String,JSONObject> itemMap;
 
-    private final ArrayList<JSONObject> forceRandomItem;
 
     private static volatile ItemLoadService itemLoadService;
 
     private ItemLoadService() {
-        ArrayList<JSONObject> waitForceRandomItem = new ArrayList<>();
         HashMap<String, JSONObject> waitItemMap = new HashMap<>();
         HashMap<String, HashMap<String, JSONObject>> mods = AssetsUnzipLoadService.getInstance().getMods();
         HashMap<String, HashMap<String, String>> assets = AssetsUnzipLoadService.getInstance().getAssets();
@@ -39,17 +37,6 @@ public final class ItemLoadService {
                                 JSONObject singleItem = items.getJSONObject(i);
                                 singleItem.put("itemImgName",thisModsAssets.get(singleItem.getString("itemImgName")));
                                 waitItemMap.put(key+"." + singleItem.getString("itemName"),singleItem);
-                                JSONObject itemPop = singleItem.getJSONObject("itemPop");
-                                if (itemPop != null && !itemPop.isEmpty()) {
-                                    try {
-                                        Integer forceChance = itemPop.getInteger("forceChance");
-                                        if (forceChance != null && forceChance >0) {
-                                            waitForceRandomItem.add(itemPop);
-                                        }
-                                    } catch (Exception e) {
-
-                                    }
-                                }
                             }
                         }
                     }
@@ -57,7 +44,6 @@ public final class ItemLoadService {
             });
         }
         itemMap = waitItemMap;
-        forceRandomItem = waitForceRandomItem;
         ArrayList<JSONObject> itemList = new ArrayList<>();
         itemMap.forEach((key,value) -> {
             itemList.add(value);
@@ -77,7 +63,7 @@ public final class ItemLoadService {
         return itemLoadService;
     }
 
-    public static void main(String[] args) {
-        new ItemLoadService();
+    public HashMap<String, JSONObject> getItemMap() {
+        return itemMap;
     }
 }
