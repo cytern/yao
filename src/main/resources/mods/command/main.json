@@ -2,48 +2,6 @@
    "activeCode":"Command",
    "data": {
        "commands" : [
-             {
-            
-                 "commandName" : "commandOff", 
-                 "commandDes" : "功能全关闭",
-                 "activeRules" : ["《机器人名》关闭所有功能","《机器人名》功能全关闭"],
-                 "activeService": "关闭开启指令",
-                 "params":["《机器人名》","全部关闭(是)"],
-                 "returns": [
-                     {
-                        "filters":["是否主人(是)","结果校验(成功)"],
-                        "type": "文本消息",
-                        "msg":"已全部关闭"
-                     },
-                     {
-                        "filters":["是否主人(否)","结果校验(失败)"],
-                        "type": "文本消息",
-                        "msg":"您并非机器的主人，无法关闭"
-                     }
-                 ]
-             },
-             {
-                "commandName" : "momo", 
-                "commandDes" : "摸摸机器人",
-                "activeRule" : "摸摸|机器人名|",
-                "activeService": "ITouchCommand",
-                "activeRobots":["helly"],
-                "returns":[
-                    {
-                        "reslut":3,
-                        "type": "string",
-                        "msg":"|机器人名|很喜欢你的摸摸|换行||[图片:helly happy]||换行|",
-                        "otherDataMap": {}
-                     },
-                     {
-                        "reslut":4,
-                        "type": "string",
-                        "msg":"。。。。我和你不熟",
-                        "otherDataMap": {}
-                     }
-                ]
-             }
-
        ]
    }
 }

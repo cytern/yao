@@ -14,6 +14,7 @@ public class CommonHttpUtil {
         String returnData = HttpRequest.post(requestBaseUrl)
                 .body(params.toJSONString())
                 .execute().body();
+        LoggerService.info("发送好感度HTTP请求返回参数:" + returnData);
         return JSONObject.parseObject(returnData);
     }
 }

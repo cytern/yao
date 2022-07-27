@@ -1,0 +1,14 @@
+{
+  "modName" : "基础物品模组",
+  "modCode" :"baseItem",
+  "author" : "cytern",
+  "classLoadType" :"itemLoader",
+  "version": "1.0",
+  "relyOnMods": [
+    {
+      "modName" : "基础配置模组",
+      "modCode" :"Core",
+	  "needVersion": "1.0"
+   }
+  ]
+}

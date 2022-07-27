@@ -1,0 +1,37 @@
+{
+   "activeCode":"baseItem",
+   "data": {
+      "assets":[
+         {
+            "fileName":"Gunther.png",
+            "fileType":"图片",
+            "config":{
+               "imgType":"multiple",
+               "model":"simple",
+               "row":2,
+               "col":2
+            }
+         },
+         {
+            "fileName":"Normal.png",
+            "fileType":"图片",
+            "config":{
+               "imgType":"multiple",
+               "model":"simple",
+               "row":6,
+               "col":2
+            }
+         }
+      ],
+      "items" : [
+         {
+            "itemName": "狗粮",
+            "itemType": "食物",
+            "itemImgName": "狗粮.png",
+            "itemDes": "狗粮 给狗吃的粮",
+            "itemPop": {}
+         }
+
+      ]
+   }
+}

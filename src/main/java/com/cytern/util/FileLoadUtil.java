@@ -13,9 +13,9 @@ public class FileLoadUtil {
     public static final String userDir;
     public static final String modsUrl;
     static {
-        if (false) {
+        if (true) {
             String property = System.getProperty("user.dir");
-            userDir = property + "/src/main/resources/mods";
+            userDir = property + "/src/main/resources";
         }else {
             userDir = System.getProperty("user.dir");
         }

@@ -8,6 +8,7 @@ import com.cytern.pojo.SimpleImageSub;
 import com.cytern.service.impl.LoggerService;
 import com.cytern.util.RobotImageUtil;
 
+import java.io.File;
 import java.util.HashMap;
 
 public class AssetsUnzipLoadService extends ModCheckService{
@@ -23,19 +24,31 @@ public class AssetsUnzipLoadService extends ModCheckService{
             v.forEach((key,value) -> {
                 try {
                     JSONObject config = value.getJSONObject("config");
-                    if (config.getString("classLoadType").equals("robotLoader") ||config.getString("classLoadType").equals("itemLoader") ){
                         String modCode = config.getString("modCode");
-                        JSONArray assetsArray = value.getJSONObject("main").getJSONArray("assets");
-                        for (int i = 0; i < assetsArray.size(); i++) {
-                            JSONObject singleAssets = assetsArray.getJSONObject(i);
-                            JSONObject config1 = singleAssets.getJSONObject("config");
-                            if (singleAssets.containsKey("config") && config1.getString("imgType").equals("multiple")) {
-                                HashMap<String, String> assetsMap = assets.get(modCode);
-                                HashMap<String,String> strings = RobotImageUtil.subImageList(FileUtil.file(assetsMap.get(singleAssets.getString("fileName"))), new SimpleImageSub(config1.getInteger("row"), config1.getInteger("col")));
-                                assetsMap.putAll(strings);
-                                assets.put(modCode,assetsMap);
+
+                        if (modCode != null && !modCode.equals("")) {
+                            JSONArray assetsArray = value.getJSONObject("main").getJSONArray("assets");
+
+                            if (assetsArray != null && assetsArray.size()>0) {
+                                for (int i = 0; i < assetsArray.size(); i++) {
+                                    JSONObject singleAssets = assetsArray.getJSONObject(i);
+                                    JSONObject config1 = singleAssets.getJSONObject("config");
+                                    if (config1 != null ) {
+                                        if (singleAssets.containsKey("config") && config1.getString("imgType").equals("multiple")) {
+                                            HashMap<String, String> assetsMap = assets.get(modCode);
+
+                                            if (assetsMap!= null && assetsMap.containsKey(singleAssets.getString("fileName"))) {
+                                                File fileName = FileUtil.file(assetsMap.get(singleAssets.getString("fileName")));
+                                                if (fileName.exists()) {
+                                                    HashMap<String, String> strings = RobotImageUtil.subImageList(fileName, new SimpleImageSub(config1.getInteger("row"), config1.getInteger("col")));
+                                                    assetsMap.putAll(strings);
+                                                    assets.put(modCode, assetsMap);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
-                        }
                     }
                 } catch (RobotException e) {
                     LoggerService.error(e.getMessage());
