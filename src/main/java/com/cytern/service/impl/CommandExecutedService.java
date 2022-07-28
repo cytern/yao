@@ -204,7 +204,14 @@ public class CommandExecutedService {
 
                           }else {
                               if (tempObj != null && tempObj.containsKey(s1)){
-                                  chain.append(tempObj.getString(s1));
+                                  String fianlString = tempObj.getString(s1);
+                                  //TODO 这里不太清真 之后优化下
+                                  if (fianlString.equals("爻图片")) {
+                                      String miraiCode = MessageSenderUtil.uploadAndReplaceImage(s, (Bot) command.get("currentBot"));
+                                      chain.append(Image.fromId(miraiCode));
+                                  }else {
+                                      chain.append(fianlString);
+                                  }
                               }else {
                                   throw new RobotException(ErrorCode.PARAM_SPLICE_NOT_RIGHT.getMsg(2));
                               }

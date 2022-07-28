@@ -7,4 +7,8 @@ public class RobotException extends RuntimeException{
     public RobotException(String message) {
         super(message);
     }
+
+    public RobotException(RuntimeException e) {
+        super(e.getMessage());
+    }
 }

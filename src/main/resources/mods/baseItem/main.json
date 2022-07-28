@@ -1,28 +1,28 @@
 {
    "activeCode":"baseItem",
-   "data": {
-      "assets":[
-         {
-            "fileName":"Gunther.png",
-            "fileType":"图片",
-            "config":{
-               "imgType":"multiple",
-               "model":"simple",
-               "row":2,
-               "col":2
-            }
-         },
-         {
-            "fileName":"Normal.png",
-            "fileType":"图片",
-            "config":{
-               "imgType":"multiple",
-               "model":"simple",
-               "row":6,
-               "col":2
-            }
+   "assets":[
+      {
+         "fileName":"item01.png",
+         "fileType":"图片",
+         "config":{
+            "imgType":"multiple",
+            "model":"simple",
+            "row":16,
+            "col":16
          }
-      ],
+      },
+      {
+         "fileName":"item02.png",
+         "fileType":"图片",
+         "config":{
+            "imgType":"multiple",
+            "model":"simple",
+            "row":16,
+            "col":16
+         }
+      }
+   ],
+   "data": {
       "items" : [
          {
             "itemName": "狗粮",
@@ -33,14 +33,112 @@
                "randomWeight": "100"
             }
          },
-
          {
-            "itemName": "空",
-            "itemType": "空",
-            "itemImgName": "",
-            "itemDes": "空 就是啥也没有",
+            "itemName": "炫酷的玄武岩",
+            "itemType": "材料",
+            "itemImgName": "item02_r0_c0.png",
+            "itemDes": "虽然炫酷 但其实就是一块石头",
             "itemPop": {
-               "forceChance": "30"
+               "forceChance": "10"
+            }
+         },
+         {
+            "itemName": "炫酷的砂岩",
+            "itemType": "材料",
+            "itemImgName": "item02_r0_c1.png",
+            "itemDes": "虽然炫酷 但其实就是一块石头",
+            "itemPop": {
+               "forceChance": "10"
+            }
+         },
+         {
+            "itemName": "炫酷的沉积岩",
+            "itemType": "材料",
+            "itemImgName": "item02_r0_c2.png",
+            "itemDes": "虽然炫酷 但其实就是一块石头",
+            "itemPop": {
+               "forceChance": "10"
+            }
+         },
+         {
+            "itemName": "一把奇怪的钥匙",
+            "itemType": "特殊道具",
+            "itemImgName": "item02_r5_c0.png",
+            "itemDes": "似乎能开启什么奇怪的东西",
+            "itemPop": {
+               "randomWeight": "1"
+            }
+         },
+         {
+            "itemName": "铁矿石",
+            "itemType": "矿石",
+            "itemImgName": "item02_r9_c0.png",
+            "itemDes": "基础的原材料",
+            "itemPop": {
+               "forceChance": "20"
+            }
+         },
+         {
+            "itemName": "铜矿石",
+            "itemType": "矿石",
+            "itemImgName": "item02_r9_c1.png",
+            "itemDes": "基础的原材料",
+            "itemPop": {
+               "randomWeight": "80"
+            }
+         },
+         {
+            "itemName": "银矿石",
+            "itemType": "矿石",
+            "itemImgName": "item02_r9_c2.png",
+            "itemDes": "基础的原材料",
+            "itemPop": {
+               "randomWeight": "40"
+            }
+         },
+         {
+            "itemName": "金矿石",
+            "itemType": "矿石",
+            "itemImgName": "item02_r9_c3.png",
+            "itemDes": "基础的原材料",
+            "itemPop": {
+               "randomWeight": "10"
+            }
+         },
+         {
+            "itemName": "钛矿石",
+            "itemType": "矿石",
+            "itemImgName": "item02_r9_c4.png",
+            "itemDes": "稀有的原材料",
+            "itemPop": {
+               "randomWeight": "5"
+            }
+         },
+         {
+            "itemName": "铬合水结晶",
+            "itemType": "矿石",
+            "itemImgName": "item02_r9_c5.png",
+            "itemDes": "特殊属性的材料矿石",
+            "itemPop": {
+               "randomWeight": "10"
+            }
+         },
+         {
+            "itemName": "钻石",
+            "itemType": "矿石",
+            "itemImgName": "item02_r9_c6.png",
+            "itemDes": "坚硬 但脆 漂亮且昂贵的宝石",
+            "itemPop": {
+               "randomWeight": "1"
+            }
+         },
+         {
+            "itemName": "兔绒绒的尾巴",
+            "itemType": "毛纺织原料",
+            "itemImgName": "item02_r15_c0.png",
+            "itemDes": "美丽 温暖 毛茸茸的尾巴毛",
+            "itemPop": {
+               "randomWeight": "2"
             }
          }
       ]

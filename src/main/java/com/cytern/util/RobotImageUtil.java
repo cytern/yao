@@ -4,6 +4,7 @@ import cn.hutool.core.img.GraphicsUtil;
 import cn.hutool.core.img.ImgUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IORuntimeException;
+import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.NumberUtil;
 import com.cytern.pojo.SimpleImageSub;
 
@@ -49,7 +50,7 @@ public class RobotImageUtil{
         } catch (Exception e) {
             e.printStackTrace();
         }
-        String parentDir = sourceDir  + "/unLoad";
+        String parentDir = sourceDir  + "/unLoad" + UUID.fastUUID().toString();
         //生成解压文件夹
         File unLoadDir = new File(parentDir);
         try {

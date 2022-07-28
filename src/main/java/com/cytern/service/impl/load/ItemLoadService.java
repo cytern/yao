@@ -66,4 +66,9 @@ public final class ItemLoadService {
     public HashMap<String, JSONObject> getItemMap() {
         return itemMap;
     }
+
+    public static void main(String[] args) {
+        ItemLoadService instance = getInstance();
+        System.out.println();
+    }
 }
