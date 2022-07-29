@@ -20,11 +20,11 @@ public class ItemService {
 
     public static void updateReflusItems(List<JSONObject> itemList,String qqId){
         String robotCode = ConfigLoadService.getInstance().getDefaultActiveRobot();
-        ThreadUtil.execute(new Runnable() {
+        ThreadUtil.execAsync(new Runnable() {
             @Override
             public void run() {
                 ItemFeign.itemUpdate(itemList,qqId);
             }
-        });
+        },false);
     }
 }

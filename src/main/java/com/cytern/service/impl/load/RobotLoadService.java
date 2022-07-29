@@ -20,6 +20,11 @@ public final class RobotLoadService {
      * 机器人指令集合
      */
     private final HashMap<String, JSONObject> robotCommand;
+
+    /**
+     * 设计一种全新的 支持动态参数的active key 整体结果为对key进行拆分 第一个hashmap存储字符集的第一个key
+     */
+    private final HashMap<String, Object> actviceRobotCommand;
     private RobotLoadService() {
 
         robotMap = new HashMap<>();
@@ -37,11 +42,16 @@ public final class RobotLoadService {
                 if (activeWordRules != null) {
                     for (int j = 0; j < activeWordRules.size(); j++) {
                         String ruleString = activeWordRules.getString(j);
-                        robotCommand.put(CommandExecutedService.handlerInputKey(ruleString,singleCommand,j),singleCommand);
+                        if (!CommandExecutedService.isOtherKey(ruleString)) {
+                            robotCommand.put(ruleString,singleCommand);
+                        }else {
+
+                        }
                     }
                 }
             }
         });
+        actviceRobotCommand = new HashMap<String, Object>();
     }
 
     public static RobotLoadService getInstance() {

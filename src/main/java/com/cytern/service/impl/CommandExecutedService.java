@@ -257,6 +257,10 @@ public class CommandExecutedService {
         }
     }
 
+    public static boolean isOtherKey(String rowRules) {
+        return rowRules.contains("《");
+    }
+
 
 
 }

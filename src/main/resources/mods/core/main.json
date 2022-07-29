@@ -12,7 +12,7 @@
     "dataService":{
         "qqId":"",
         "key":"",
-      "requestBaseUrl": "82.157.40.205:2030"
+      "requestBaseUrl": "http://localhost:2030"
     },
     "masterQqId": "2477185748",
     "defaultActiveRobot": "HellyRobot",

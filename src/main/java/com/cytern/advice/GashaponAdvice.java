@@ -41,7 +41,7 @@ public class GashaponAdvice {
         JSONObject params = new JSONObject();
         params.put("qqId","2477185748");
         JSONObject jsonObject = randomGashapon(params, "10");
-        System.out.println(jsonObject.toJSONString());
+        System.out.println(jsonObject.getString("itemNames"));
     }
 
 
@@ -91,13 +91,8 @@ public class GashaponAdvice {
         JSONObject oneTypeCached = new JSONObject();
         if (type != null) {
             oneTypeCached = RobotCachedUtil.getInstance().getTypeItemCache().get(type);
-        }else {
-            LRUCache<String, JSONObject> typeItemCache = RobotCachedUtil.getInstance().getTypeItemCache();
-            for (JSONObject jsonObject : typeItemCache) {
-                oneTypeCached.putAll(jsonObject);
-            }
         }
-        if (oneTypeCached != null) {
+        if (oneTypeCached != null && !oneTypeCached.isEmpty()) {
             canRandomArrays = (ArrayList<JSONObject>) oneTypeCached.get("canRandomArrays");
             forceRandomArrays = (ArrayList<JSONObject>) oneTypeCached.get("forceRandomArrays");
             totalWeight.set(oneTypeCached.getInteger("totalWeight"));
@@ -106,7 +101,7 @@ public class GashaponAdvice {
             ArrayList<JSONObject> finalForceRandomArrays = forceRandomArrays;
             ArrayList<JSONObject> finalCanRandomArrays = canRandomArrays;
             itemMap.forEach((key, value) -> {
-                if (value.getString("itemType") != null && value.getString("itemType").equals(type)) {
+                if ((value.getString("itemType") != null && value.getString("itemType").equals(type)) || type == null) {
                     JSONObject itemPop = value.getJSONObject("itemPop");
                     if (itemPop != null && !itemPop.isEmpty()) {
                         if (itemPop.containsKey("forceChance")) {
@@ -142,7 +137,7 @@ public class GashaponAdvice {
         ArrayList<JSONObject> waitAddItem = new ArrayList<>();
         try {
             int i = Integer.parseInt(times);
-            for (int j = 0; j < i; i++) {
+            for (int j = 0; j < i; j++) {
                 boolean forceFlag = false;
                 //通过随机 先去随机强制获取的
                 for (JSONObject singleRandom : forceRandomArrays) {
@@ -151,7 +146,7 @@ public class GashaponAdvice {
                     int thisOne = RandomUtil.randomInt(100);
                     if (thisOne<forceChance) {
                         if (!singleRandom.getString("itemType").equals("空")) {
-                            waitAddItem.add(singleRandom);
+                            waitAddItem.add(new JSONObject(singleRandom));
                         }
                         forceFlag = true;
                         break;
@@ -167,15 +162,15 @@ public class GashaponAdvice {
                     JSONObject singleRandomItem = canRandomArrays.get(a);
                     if (a == canRandomArrays.size()-1) {
                         if (!singleRandomItem.getString("itemType").equals("空")) {
-                            waitAddItem.add(singleRandomItem);
+                            waitAddItem.add(new JSONObject(singleRandomItem));
                         }
                         break;
                     }else {
-                        Integer randomWeight = singleRandomItem.getInteger("randomWeight");
+                        Integer randomWeight = singleRandomItem.getJSONObject("itemPop").getInteger("randomWeight");
                         tempWeight = tempWeight + randomWeight;
                         if (tempWeight>=ran) {
                             if (!singleRandomItem.getString("itemType").equals("空")) {
-                                waitAddItem.add(singleRandomItem);
+                                waitAddItem.add(new JSONObject(singleRandomItem));
                             }
                             break;
                         }
