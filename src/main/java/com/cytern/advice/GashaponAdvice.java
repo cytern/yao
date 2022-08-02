@@ -71,7 +71,7 @@ public class GashaponAdvice {
         List<JSONObject> randomGasShapon = getRandomGasShapon(times, type);
         for (JSONObject jsonObject : randomGasShapon) {
             jsonObject.put("num",1);
-            stringBuilder.append(jsonObject.getString("itemName")).append(" ");
+            stringBuilder.append(jsonObject.getString("itemName")).append(" ").append("\n");
         }
         returnJsons.put("itemList",randomGasShapon);
         returnJsons.put("times",i);
@@ -88,7 +88,7 @@ public class GashaponAdvice {
         ArrayList<JSONObject> canRandomArrays = new ArrayList<>();
         ArrayList<JSONObject> forceRandomArrays = new ArrayList<>();
         AtomicReference<Integer> totalWeight = new AtomicReference<>(0);
-        JSONObject oneTypeCached = new JSONObject();
+        JSONObject oneTypeCached =null;
         if (type != null) {
             oneTypeCached = RobotCachedUtil.getInstance().getTypeItemCache().get(type);
         }
@@ -132,7 +132,7 @@ public class GashaponAdvice {
             onesItem.put("forceRandomArrays",finalForceRandomArrays);
             onesItem.put("totalWeight",totalWeight.get());
             //存入缓存中
-            RobotCachedUtil.getInstance().getTypeItemCache().put(type,onesItem);
+//            RobotCachedUtil.getInstance().getTypeItemCache().put(type,onesItem);
         }
         ArrayList<JSONObject> waitAddItem = new ArrayList<>();
         try {

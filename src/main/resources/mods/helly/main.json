@@ -55,6 +55,18 @@
                     "returnMsg" : "我也喜欢你  \n 《爻图片.HellyRobot.Normal_r2_c0.png》"
                 }
             ]
+        },
+        {
+            "activeWordRules" : [ "十连扭蛋 海莉","海莉 十连","海丽 十连","给我十连 海丽"],
+            "activeService": "通用消息",
+            "returnWordRules" : [
+                {
+                    "preFilter" : [],
+                    "repeatFilter": [],
+                    "preReturn": ["随机扭蛋(10)"],
+                    "returnMsg" : "你的扭蛋结果是  \n 《爻服务1.itemNames》"
+                }
+            ]
         }
     ]
 
