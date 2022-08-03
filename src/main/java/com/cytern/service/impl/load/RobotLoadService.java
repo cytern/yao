@@ -42,11 +42,7 @@ public final class RobotLoadService {
                 if (activeWordRules != null) {
                     for (int j = 0; j < activeWordRules.size(); j++) {
                         String ruleString = activeWordRules.getString(j);
-                        if (!CommandExecutedService.isOtherKey(ruleString)) {
                             robotCommand.put(ruleString,singleCommand);
-                        }else {
-
-                        }
                     }
                 }
             }

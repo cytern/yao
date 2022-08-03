@@ -48,16 +48,50 @@ public class CommonMessageProcessor {
         if (commonMessageActiveFilter != null) {
             //执行机器人指令
             CommandExecutedService.handleCommand(addEventData(messageEvent,commonMessageActiveFilter));
+            return;
         }
 
         if (robotMapActiveFilter(sourceMessage)) {
-            //执行自动ai指令
+            //执行再次机器人指令但需要特殊处理入参
+            JSONObject forceCommand = addForceEventData(messageEvent, new JSONObject());
+            if (forceCommand.getBoolean("force")) {
+                JSONObject forceCommandData = commonMessageActiveFilter(forceCommand.getString("newMessage"));
+                forceCommandData.putAll(forceCommand);
+                CommandExecutedService.handleCommand(forceCommandData);
+            }
+
 
         }
     }
 
 
     private JSONObject addEventData(MessageEvent event,JSONObject commandData) {
+        commandData.put("subject",event.getSubject());
+        commandData.put("qqId",event.getSender().getId());
+        commandData.put("currentBot",currentRobot);
+        commandData.put("qqName",event.getSender().getNick());
+        return commandData;
+    }
+
+    private JSONObject addForceEventData(MessageEvent event,JSONObject commandData) {
+        String s = event.getMessage().contentToString();
+        StringBuilder newString = new StringBuilder();
+        if (s.contains(" ")) {
+            String[] s1 = s.split(" ");
+            newString.append(s1[0]).append(" ");
+            for (int i = 1; i < s1.length; i++) {
+                if (i != s1.length-1) {
+                    newString.append("《爻入参》").append(" ");
+                }else {
+                    newString.append("《爻入参》");
+                }
+                commandData.put("爻入参" + i,s1[i]);
+            }
+            commandData.put("force",true);
+            commandData.put("newMessage",newString.toString());
+        }else {
+            commandData.put("force",false);
+        }
         commandData.put("subject",event.getSubject());
         commandData.put("qqId",event.getSender().getId());
         commandData.put("currentBot",currentRobot);
@@ -114,7 +148,7 @@ public class CommonMessageProcessor {
         HashMap<String, String> robotMap = RobotLoadService.getInstance().getRobotMap();
         AtomicBoolean flag = new AtomicBoolean(false);
         robotMap.forEach((key,value) -> {
-            if (sourceMessage.contains(value)) {
+            if (sourceMessage.contains(key)) {
                 flag.set(true);
             }
         });

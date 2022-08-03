@@ -48,7 +48,7 @@
             ]
         },
         {
-            "activeWordRules" : [ "我好喜欢你 阿斯","海莉我好喜欢你","海莉我爱你","海莉我好喜欢"],
+            "activeWordRules" : [ "我宣你啊海丽","海莉我好喜欢你","海莉我爱你","海莉我好喜欢"],
             "activeService": "通用消息",
             "returnWordRules" : [
                 {
@@ -64,7 +64,31 @@
                     "preFilter" : [],
                     "repeatFilter": [],
                     "preReturn": ["随机扭蛋(10)"],
-                    "returnMsg" : "你的扭蛋结果是  \n 《爻服务1.itemNames》"
+                    "returnMsg" : "你的扭蛋结果是  \n《爻服务1.itemNames》"
+                }
+            ]
+        },
+        {
+            "activeWordRules" : [ "物品栏海莉","海莉物品栏","海丽背包","背包海丽","打开背包海丽","海丽打开背包"],
+            "activeService": "通用消息",
+            "returnWordRules" : [
+                {
+                    "preFilter" : [],
+                    "repeatFilter": [],
+                    "preReturn": ["我的物品列表()"],
+                    "returnMsg" : "你的背包里有  \n《爻服务1.物品栏》"
+                }
+            ]
+        },
+        {
+            "activeWordRules" : [ "海丽看看 《爻入参》"],
+            "activeService": "通用消息",
+            "returnWordRules" : [
+                {
+                    "preFilter" : [],
+                    "repeatFilter": [],
+                    "preReturn": ["检视物品(爻入参1)"],
+                    "returnMsg" : "《爻服务1.物品图片》 \n《爻服务1.物品介绍》"
                 }
             ]
         }

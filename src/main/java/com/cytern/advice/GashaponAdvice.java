@@ -1,15 +1,21 @@
 package com.cytern.advice;
 
-import cn.hutool.cache.impl.LRUCache;
 import cn.hutool.core.util.RandomUtil;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cytern.aspect.RobotAdvice;
 import com.cytern.exception.RobotException;
+import com.cytern.network.api.ItemFeign;
 import com.cytern.network.service.ItemService;
 import com.cytern.pojo.ErrorCode;
+import com.cytern.service.impl.LoggerService;
+import com.cytern.service.impl.load.ConfigLoadService;
 import com.cytern.service.impl.load.ItemLoadService;
+import com.cytern.service.impl.load.base.AssetsUnzipLoadService;
+import com.cytern.util.MessageSenderUtil;
 import com.cytern.util.RobotCachedUtil;
-import com.tencentcloudapi.ame.v20190916.models.Item;
+import net.mamoe.mirai.contact.Contact;
+import net.mamoe.mirai.message.data.MessageChainBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,16 +39,51 @@ public class GashaponAdvice {
     @RobotAdvice(name = "我的物品列表")
     public static JSONObject getItemIHave(JSONObject params) {
         JSONObject backJson = new JSONObject();
+        StringBuilder stringBuilder = new StringBuilder();
+        JSONObject items = ItemFeign.itemUpdate(null, params.getString("qqId"));
+        JSONArray itemList = items.getJSONObject("data").getJSONArray("itemList");
+        for (int i = 0; i < itemList.size(); i++) {
+            JSONObject jsonObject = itemList.getJSONObject(i);
+            stringBuilder.append(jsonObject.getString("itemName")).append(" ").append("*").append(jsonObject.getString("num")).append("\n");
+        }
+        backJson.put("itemList",itemList);
+        backJson.put("物品栏",stringBuilder.toString());
         return backJson;
     }
 
-    public static void main(String[] args) {
-        ItemLoadService.getInstance().getItemMap();
-        JSONObject params = new JSONObject();
-        params.put("qqId","2477185748");
-        JSONObject jsonObject = randomGashapon(params, "10");
-        System.out.println(jsonObject.getString("itemNames"));
+    @RobotAdvice(name = "检视物品")
+    public static JSONObject showItemWhat (JSONObject params,String itemName) {
+        JSONObject backJson = new JSONObject();
+        HashMap<String, JSONObject> itemMap = ItemLoadService.getInstance().getItemMap();
+        StringBuilder stringBuilder = new StringBuilder();
+        AtomicReference<JSONObject> singleJson = new AtomicReference<>(new JSONObject());
+        itemMap.forEach( (key,value) -> {
+            if (value.getString("itemName").equals(itemName)) {
+                 singleJson.set(value);
+            }
+        });
+        JSONObject finalJson = singleJson.get();
+        if (finalJson.isEmpty()) {
+            MessageChainBuilder chain = new MessageChainBuilder();
+            chain.append("看不见！").append(ConfigLoadService.getInstance().getDefaultRobotName()).append("从来没见过那个哎");
+            MessageSenderUtil.normalSend( (Contact) params.get("subject"),chain.build());
+            throw new RobotException("找不到指定物品");
+        }
+        backJson.put("物品图片",finalJson.getString("itemImgName"));
+        stringBuilder.append("物品名称:").append(finalJson.getString("itemName")).append("\n")
+                .append("物品类别:").append(finalJson.getString("itemType")).append("\n")
+                .append("物品介绍:").append(finalJson.getString("itemDes")).append("\n");
+        backJson.put("物品介绍",stringBuilder.toString());
+        return backJson;
+
     }
+
+    public static void main(String[] args) {
+        HashMap<String, HashMap<String, String>> assets = AssetsUnzipLoadService.getInstance().getAssets();
+        HashMap<String, JSONObject> itemMap = ItemLoadService.getInstance().getItemMap();
+        System.out.println();
+    }
+
 
 
 

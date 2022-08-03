@@ -2,7 +2,7 @@
    "activeCode":"baseItem",
    "assets":[
       {
-         "fileName":"item01.png",
+         "fileName":"item02.png",
          "fileType":"图片",
          "config":{
             "imgType":"multiple",
@@ -12,7 +12,7 @@
          }
       },
       {
-         "fileName":"item02.png",
+         "fileName":"item03.png",
          "fileType":"图片",
          "config":{
             "imgType":"multiple",
@@ -63,7 +63,7 @@
          {
             "itemName": "一把奇怪的钥匙",
             "itemType": "特殊道具",
-            "itemImgName": "item02_r5_c0.png",
+            "itemImgName": "item02_r4_c0.png",
             "itemDes": "似乎能开启什么奇怪的东西",
             "itemPop": {
                "randomWeight": "1"
@@ -72,7 +72,7 @@
          {
             "itemName": "铁矿石",
             "itemType": "矿石",
-            "itemImgName": "item02_r9_c0.png",
+            "itemImgName": "item02_r8_c0.png",
             "itemDes": "基础的原材料",
             "itemPop": {
                "forceChance": "20"
@@ -81,7 +81,7 @@
          {
             "itemName": "铜矿石",
             "itemType": "矿石",
-            "itemImgName": "item02_r9_c1.png",
+            "itemImgName": "item02_r8_c1.png",
             "itemDes": "基础的原材料",
             "itemPop": {
                "randomWeight": "80"
@@ -90,7 +90,7 @@
          {
             "itemName": "银矿石",
             "itemType": "矿石",
-            "itemImgName": "item02_r9_c2.png",
+            "itemImgName": "item02_r8_c2.png",
             "itemDes": "基础的原材料",
             "itemPop": {
                "randomWeight": "40"
@@ -99,7 +99,7 @@
          {
             "itemName": "金矿石",
             "itemType": "矿石",
-            "itemImgName": "item02_r9_c3.png",
+            "itemImgName": "item02_r8_c3.png",
             "itemDes": "基础的原材料",
             "itemPop": {
                "randomWeight": "10"
@@ -108,7 +108,7 @@
          {
             "itemName": "钛矿石",
             "itemType": "矿石",
-            "itemImgName": "item02_r9_c4.png",
+            "itemImgName": "item02_r8_c4.png",
             "itemDes": "稀有的原材料",
             "itemPop": {
                "randomWeight": "5"
@@ -117,7 +117,7 @@
          {
             "itemName": "铬合水结晶",
             "itemType": "矿石",
-            "itemImgName": "item02_r9_c5.png",
+            "itemImgName": "item02_r8_c5.png",
             "itemDes": "特殊属性的材料矿石",
             "itemPop": {
                "randomWeight": "10"
@@ -126,7 +126,7 @@
          {
             "itemName": "钻石",
             "itemType": "矿石",
-            "itemImgName": "item02_r9_c6.png",
+            "itemImgName": "item02_r8_c6.png",
             "itemDes": "坚硬 但脆 漂亮且昂贵的宝石",
             "itemPop": {
                "randomWeight": "1"
@@ -139,6 +139,24 @@
             "itemDes": "美丽 温暖 毛茸茸的尾巴毛",
             "itemPop": {
                "randomWeight": "2"
+            }
+         },
+         {
+            "itemName": "糖糖的小心心",
+            "itemType": "特殊剧情道具",
+            "itemImgName": "item03_r13_c15.png",
+            "itemDes": "糖糖小可爱的小小心心 送给最喜欢的你！",
+            "itemPop": {
+               "randomWeight": "1"
+            }
+         },
+         {
+            "itemName": "教主的小宠物",
+            "itemType": "特殊剧情道具",
+            "itemImgName": "item02_r2_c3.png",
+            "itemDes": "教主的鹦鹉去世了 死前叼着一只毛毛虫。教主想要把虫子拿走时虫子忽然挣扎着扭动着身躯 挣扎间竟神似去世的鹦鹉酱！教主认为这是鹦鹉的与毛毛虫的私生子（什么）鹦鹉鹦鹉酱已经有老公了。教主抱着复杂的心情拿了张卫生纸把毛毛虫拿了起来放到了一个纸盒里，并给它起名绿豆馅饺子",
+            "itemPop": {
+               "randomWeight": "1"
             }
          }
       ]

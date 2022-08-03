@@ -7,6 +7,7 @@ import com.cytern.exception.RobotException;
 import com.cytern.pojo.ErrorCode;
 import com.cytern.service.impl.load.AdviceLoadService;
 import com.cytern.service.impl.load.FilterLoadService;
+import com.cytern.service.impl.load.base.AssetsUnzipLoadService;
 import com.cytern.service.impl.load.base.RobotCommandLoadService;
 import com.cytern.util.MessageSenderUtil;
 import net.mamoe.mirai.Bot;
@@ -17,6 +18,7 @@ import net.mamoe.mirai.message.data.MessageChainBuilder;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
+import java.util.HashMap;
 
 /**
  * 指令执行服务
@@ -68,6 +70,8 @@ public class CommandExecutedService {
                     }
                     String substring = rawString.substring(rawString.indexOf("(")+1, rawString.indexOf(")"));
                     String[] params = substring.split(",");
+                    //重新处理入参
+                    resetParams(params,command);
                     boolean b = FilterLoadService.getInstance().handlerFilterExecuted(command, handlerRawStringToType(params, rawString.substring(0, rawString.indexOf("("))), params);
                     if (!b) {
                         unPassArray.add(preFilter);
@@ -86,6 +90,14 @@ public class CommandExecutedService {
             throw new RobotException("前置筛选器下没有正确的返回值");
         }
         return returns;
+    }
+
+    private static void resetParams (String[] params,JSONObject commands) {
+        for (int i = 0; i < params.length; i++) {
+            if (params[i].contains("爻入参")) {
+                params[i] = commands.getString(params[i]);
+            }
+        }
     }
 
 
@@ -169,6 +181,7 @@ public class CommandExecutedService {
                 String rawString = preReturn.getString(i);
                 String substring = rawString.substring(rawString.indexOf("(")+1, rawString.indexOf(")"));
                 String[] params = substring.split(",");
+                resetParams(params,command);
                 command = AdviceLoadService.getInstance().handlerAdviceExecuted(command,handlerRawStringToType(params, rawString.substring(0, rawString.indexOf("("))), params,i);
             }
         }
@@ -205,9 +218,8 @@ public class CommandExecutedService {
                           }else {
                               if (tempObj != null && tempObj.containsKey(s1)){
                                   String fianlString = tempObj.getString(s1);
-                                  //TODO 这里不太清真 之后优化下
-                                  if (fianlString.equals("爻图片")) {
-                                      String miraiCode = MessageSenderUtil.uploadAndReplaceImage(s, (Bot) command.get("currentBot"));
+                                  if (fianlString.contains("爻图片")) {
+                                      String miraiCode = MessageSenderUtil.uploadAndReplaceImage(fianlString, (Bot) command.get("currentBot"));
                                       chain.append(Image.fromId(miraiCode));
                                   }else {
                                       chain.append(fianlString);
@@ -233,6 +245,7 @@ public class CommandExecutedService {
             }
         }
         return chain.build();
+//        return null;
     }
 
     /**
@@ -258,7 +271,7 @@ public class CommandExecutedService {
     }
 
     public static boolean isOtherKey(String rowRules) {
-        return rowRules.contains("《");
+        return rowRules.contains("《")&&rowRules.contains("》");
     }
 
 

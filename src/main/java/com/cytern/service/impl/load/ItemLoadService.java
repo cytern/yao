@@ -35,7 +35,7 @@ public final class ItemLoadService {
                         if (items != null && items.size()>0) {
                             for (int i = 0; i < items.size(); i++) {
                                 JSONObject singleItem = items.getJSONObject(i);
-                                singleItem.put("itemImgName",thisModsAssets.get(singleItem.getString("itemImgName")));
+                                singleItem.put("itemImgName","爻图片" + "." + key + "." + singleItem.getString("itemImgName"));
                                 waitItemMap.put(key+"." + singleItem.getString("itemName"),singleItem);
                             }
                         }
