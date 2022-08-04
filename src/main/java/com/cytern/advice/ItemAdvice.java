@@ -1,20 +1,22 @@
-package com.cytern.filter;
+package com.cytern.advice;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cytern.aspect.RobotAdvice;
 import com.cytern.aspect.RobotFilter;
 import com.cytern.exception.RobotException;
 import com.cytern.network.api.ItemFeign;
+import com.cytern.service.impl.LoggerService;
 import com.cytern.util.MessageSenderUtil;
 import net.mamoe.mirai.contact.Contact;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@RobotFilter(name = "物品筛选器")
-public class ItemFilter {
+@RobotAdvice(name = "物品筛选器")
+public class ItemAdvice {
 
 
-    public static boolean itemUser(List<JSONObject> items,JSONObject params){
+    public static JSONObject itemUser(List<JSONObject> items,JSONObject params){
         JSONObject request = new JSONObject();
         request.put("itemList",items);
         JSONObject reduceObject =new JSONObject();
@@ -27,11 +29,14 @@ public class ItemFilter {
                 MessageSenderUtil.exceptionSendBreak((Contact) params.get("subject"), e.getMessage());
             }
         }
-        return true;
+        JSONObject returnData = new JSONObject();
+        returnData.put("结果",true);
+        return returnData;
     }
 
-    @RobotFilter(name = "物品消耗")
-    public static boolean itemUseFilter (JSONObject params,String name,String num) {
+    @RobotAdvice(name = "物品消耗")
+    public static JSONObject itemUseFilter (JSONObject params,String name,String num) {
+        LoggerService.info("进入到物品消耗筛选器");
         ArrayList<JSONObject> jsonObjects = new ArrayList<>();
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("num",num);
@@ -42,8 +47,8 @@ public class ItemFilter {
 
 
 
-    @RobotFilter(name = "物品消耗")
-    public static boolean itemUseFilter (JSONObject params,String name1,String num1,String name2,String num2) {
+    @RobotAdvice(name = "物品消耗")
+    public static JSONObject itemUseFilter (JSONObject params,String name1,String num1,String name2,String num2) {
         ArrayList<JSONObject> jsonObjects = new ArrayList<>();
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("num",num1);
@@ -57,8 +62,8 @@ public class ItemFilter {
 
     }
 
-    @RobotFilter(name = "物品消耗")
-    public static boolean itemUseFilter (JSONObject params,String name1,String num1,String name2,String num2,String name3,String num3) {
+    @RobotAdvice(name = "物品消耗")
+    public static JSONObject itemUseFilter (JSONObject params,String name1,String num1,String name2,String num2,String name3,String num3) {
         ArrayList<JSONObject> jsonObjects = new ArrayList<>();
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("num",num1);

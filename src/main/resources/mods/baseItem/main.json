@@ -49,7 +49,7 @@
             "itemImgName": "item02_r0_c0.png",
             "itemDes": "虽然炫酷 但其实就是一块石头",
             "itemPop": {
-               "forceChance": "10"
+
             }
          },
          {
@@ -58,7 +58,7 @@
             "itemImgName": "item02_r0_c1.png",
             "itemDes": "虽然炫酷 但其实就是一块石头",
             "itemPop": {
-               "forceChance": "10"
+
             }
          },
          {
@@ -67,7 +67,7 @@
             "itemImgName": "item02_r0_c2.png",
             "itemDes": "虽然炫酷 但其实就是一块石头",
             "itemPop": {
-               "forceChance": "10"
+               "randomWeight": "100"
             }
          },
          {
@@ -85,7 +85,7 @@
             "itemImgName": "item02_r8_c0.png",
             "itemDes": "基础的原材料",
             "itemPop": {
-               "forceChance": "20"
+               "randomWeight": "100"
             }
          },
          {
@@ -163,7 +163,7 @@
          {
             "itemName": "教主的小宠物",
             "itemType": "特殊剧情道具",
-            "itemImgName": "item02_r9_c5.png",
+            "itemImgName": "item02_r10_c5.png",
             "itemDes": "教主的鹦鹉去世了 死前叼着一只毛毛虫。教主想要把虫子拿走时虫子忽然挣扎着扭动着身躯 挣扎间竟神似去世的鹦鹉酱！教主认为这是鹦鹉的与毛毛虫的私生子（什么）鹦鹉鹦鹉酱已经有老公了。教主抱着复杂的心情拿了张卫生纸把毛毛虫拿了起来放到了一个纸盒里，并给它起名绿豆馅饺子",
             "itemPop": {
                "randomWeight": "1"
@@ -172,7 +172,7 @@
          {
             "itemName": "绿豆馅月饼的专属外出包",
             "itemType": "教主特殊道具",
-            "itemImgName": "item02_r9_c8.png",
+            "itemImgName": "item02_r10_c9.png",
             "itemDes": "这是教主在储物间翻到的 当年坑多多团购买的9.9包邮 当时商品名好像是《仙女氛围可爱御姐背包葡萄紫可以防导弹级的兔子仙女包》已经落灰了，教主洗了洗决定拿来装绿豆馅月饼",
             "itemPop": {
 
@@ -204,7 +204,26 @@
             "itemPop": {
 
             }
-         }
+         },
+         {
+            "itemName": "遗失的美好",
+            "itemType": "礼盒",
+            "itemImgName": "item03_r15_c4.png",
+            "itemDes": "里面装着十个未知的宝物 快使用 <海丽 十连>指令开开看吧",
+            "itemPop": {
+               "firstUseAdd" : "20"
+            }
+         },
+          {
+            "itemName": "可爱的兔绒绒",
+            "itemType": "宠物",
+            "itemImgName": "item02_r15_c1.png",
+            "itemDes": "可可爱爱绒绒软软的兔绒绒 相传 只要集齐十个尾巴毛就可以召唤它",
+            "itemPop": {
+
+            }
+          }
+
       ]
    }
 }

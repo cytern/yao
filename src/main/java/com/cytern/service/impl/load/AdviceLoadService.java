@@ -77,7 +77,7 @@ public class AdviceLoadService {
     /**
      *  处理增强器
      */
-    public  JSONObject handlerAdviceExecuted(JSONObject command, String key, String[] params,int i) {
+    public  JSONObject handlerAdviceExecuted(JSONObject command, String key, String[] params,int i) throws InvocationTargetException, IllegalAccessException {
         Method method = advices.get(key);
         JSONObject result = new JSONObject(command);
         if (method == null) {
@@ -88,8 +88,7 @@ public class AdviceLoadService {
         ArrayList<Object> paramsObject = new ArrayList<>();
         paramsObject.add(command);
         Collections.addAll(paramsObject,params);
-        try {
-            JSONObject invoke;
+        JSONObject invoke;
             if (params.length == 0 || (params.length == 1&& params[0].equals("") )) {
                 invoke =(JSONObject) method.invoke(null, command);
             }else if(params.length == 1) {
@@ -102,13 +101,6 @@ public class AdviceLoadService {
                 invoke = new JSONObject();
             }
             result.put("爻服务" + (i+1),  invoke);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            result.put("msg","哇(脑子里好像出现了个bug)");
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-            result.put("msg","哇(脑子里好像出现了个bug)");
-        }
         return result;
     }
 }

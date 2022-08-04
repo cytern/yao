@@ -61,10 +61,10 @@
             "activeService": "通用消息",
             "returnWordRules" : [
                 {
-                    "preFilter" : ["物品消耗(遗失的美好,10)"],
+                    "preFilter" : [],
                     "repeatFilter": [],
-                    "preReturn": ["随机扭蛋(10)"],
-                    "returnMsg" : "你的扭蛋结果是  \n《爻服务1.itemNames》"
+                    "preReturn": ["物品消耗(遗失的美好,-1)","随机扭蛋(10)"],
+                    "returnMsg" : "你的扭蛋结果是  \n《爻服务2.itemNames》"
                 }
             ]
         },

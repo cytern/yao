@@ -182,7 +182,15 @@ public class CommandExecutedService {
                 String substring = rawString.substring(rawString.indexOf("(")+1, rawString.indexOf(")"));
                 String[] params = substring.split(",");
                 resetParams(params,command);
-                command = AdviceLoadService.getInstance().handlerAdviceExecuted(command,handlerRawStringToType(params, rawString.substring(0, rawString.indexOf("("))), params,i);
+                try {
+                    command = AdviceLoadService.getInstance().handlerAdviceExecuted(command,handlerRawStringToType(params, rawString.substring(0, rawString.indexOf("("))), params,i);
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                    throw new RobotException("系统错误");
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                    throw new RobotException("系统错误");
+                }
             }
         }
         return command;
