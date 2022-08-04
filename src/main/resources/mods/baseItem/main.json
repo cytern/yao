@@ -20,6 +20,16 @@
             "row":16,
             "col":16
          }
+      },
+      {
+         "fileName":"item04.png",
+         "fileType":"图片",
+         "config":{
+            "imgType":"multiple",
+            "model":"simple",
+            "row":16,
+            "col":16
+         }
       }
    ],
    "data": {
@@ -153,10 +163,46 @@
          {
             "itemName": "教主的小宠物",
             "itemType": "特殊剧情道具",
-            "itemImgName": "item02_r2_c3.png",
+            "itemImgName": "item02_r9_c5.png",
             "itemDes": "教主的鹦鹉去世了 死前叼着一只毛毛虫。教主想要把虫子拿走时虫子忽然挣扎着扭动着身躯 挣扎间竟神似去世的鹦鹉酱！教主认为这是鹦鹉的与毛毛虫的私生子（什么）鹦鹉鹦鹉酱已经有老公了。教主抱着复杂的心情拿了张卫生纸把毛毛虫拿了起来放到了一个纸盒里，并给它起名绿豆馅饺子",
             "itemPop": {
                "randomWeight": "1"
+            }
+         },
+         {
+            "itemName": "绿豆馅月饼的专属外出包",
+            "itemType": "教主特殊道具",
+            "itemImgName": "item02_r9_c8.png",
+            "itemDes": "这是教主在储物间翻到的 当年坑多多团购买的9.9包邮 当时商品名好像是《仙女氛围可爱御姐背包葡萄紫可以防导弹级的兔子仙女包》已经落灰了，教主洗了洗决定拿来装绿豆馅月饼",
+            "itemPop": {
+
+            }
+         },
+         {
+            "itemName": "许愿星",
+            "itemType": "七夕的回忆",
+            "itemImgName": "item04_r4_c11.png",
+            "itemDes": "百里挑一好运者的证明之物",
+            "itemPop": {
+
+            }
+         },
+         {
+            "itemName": "蓝色许愿星",
+            "itemType": "七夕的回忆",
+            "itemImgName": "item04_r4_c10.png",
+            "itemDes": "千里挑一好运者的证明之物",
+            "itemPop": {
+
+            }
+         },
+         {
+            "itemName": "金色许愿星",
+            "itemType": "七夕的回忆",
+            "itemImgName": "item04_r4_c12.png",
+            "itemDes": "万里挑一好运者的证明之物",
+            "itemPop": {
+
             }
          }
       ]

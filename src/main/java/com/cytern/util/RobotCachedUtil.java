@@ -21,10 +21,13 @@ public class RobotCachedUtil {
      * 物品类型缓存 缓存 最久未使用缓存
      */
     private final LRUCache<String, JSONObject> typeItemCache;
+
+    private final TimedCache<String,String> prayForResult;
     private RobotCachedUtil() {
          imageCache = CacheUtil.newTimedCache(1000*60*60*1);
          favorCache = CacheUtil.newTimedCache(1000*60*60*24);
          typeItemCache = CacheUtil.newLRUCache(10);//存十个类型的物品
+        prayForResult = CacheUtil.newTimedCache(1000*60*60*1);
     }
 
     public static RobotCachedUtil getInstance() {
@@ -48,6 +51,10 @@ public class RobotCachedUtil {
 
     public LRUCache<String, JSONObject> getTypeItemCache() {
         return typeItemCache;
+    }
+
+    public TimedCache<String,String> getPrayForResult() {
+        return prayForResult;
     }
 }
 

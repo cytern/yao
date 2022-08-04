@@ -61,7 +61,7 @@
             "activeService": "通用消息",
             "returnWordRules" : [
                 {
-                    "preFilter" : [],
+                    "preFilter" : ["物品消耗(遗失的美好,10)"],
                     "repeatFilter": [],
                     "preReturn": ["随机扭蛋(10)"],
                     "returnMsg" : "你的扭蛋结果是  \n《爻服务1.itemNames》"
@@ -89,6 +89,18 @@
                     "repeatFilter": [],
                     "preReturn": ["检视物品(爻入参1)"],
                     "returnMsg" : "《爻服务1.物品图片》 \n《爻服务1.物品介绍》"
+                }
+            ]
+        },
+        {
+            "activeWordRules" : [ "海丽乞巧","海丽祈巧","海丽77","77海丽"],
+            "activeService": "通用消息",
+            "returnWordRules" : [
+                {
+                    "preFilter" : [],
+                    "repeatFilter": [],
+                    "preReturn": ["七夕乞巧()"],
+                    "returnMsg" : "《爻服务1.返回结果》《爻服务1.图片》"
                 }
             ]
         }

@@ -10,6 +10,7 @@ import net.mamoe.mirai.contact.ContactList;
 import net.mamoe.mirai.contact.Friend;
 import net.mamoe.mirai.message.data.Image;
 import net.mamoe.mirai.message.data.MessageChain;
+import net.mamoe.mirai.message.data.MessageChainBuilder;
 import net.mamoe.mirai.utils.ExternalResource;
 
 import java.io.File;
@@ -64,5 +65,13 @@ public class MessageSenderUtil {
             RobotCachedUtil.getInstance().getImageCache().put(rawCode,image.getImageId());
             return  image.getImageId();
         }
+    }
+
+
+    public static void exceptionSendBreak(Contact subject,String msg) {
+        MessageChainBuilder singleMessages = new MessageChainBuilder();
+        singleMessages.append(msg);
+        normalSend(subject,singleMessages.build());
+        throw new RobotException(msg);
     }
  }
