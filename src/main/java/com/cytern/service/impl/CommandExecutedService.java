@@ -7,8 +7,8 @@ import com.cytern.exception.RobotException;
 import com.cytern.pojo.ErrorCode;
 import com.cytern.service.impl.load.AdviceLoadService;
 import com.cytern.service.impl.load.FilterLoadService;
-import com.cytern.service.impl.load.base.AssetsUnzipLoadService;
 import com.cytern.service.impl.load.base.RobotCommandLoadService;
+import com.cytern.util.CommCodeResultUtil;
 import com.cytern.util.MessageSenderUtil;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.message.data.Image;
@@ -18,7 +18,6 @@ import net.mamoe.mirai.message.data.MessageChainBuilder;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
-import java.util.HashMap;
 
 /**
  * 指令执行服务
@@ -45,63 +44,6 @@ public class CommandExecutedService {
 
 
     }
-
-    /**
-     * 前筛选器
-     */
-    public static JSONArray preFilterReturn(JSONObject command) {
-        JSONArray returnWordRules = command.getJSONArray("returnWordRules");
-        if (returnWordRules.size()<1) {
-            throw new RobotException("无效的机器编码 无法获取到任何一个可达到的回复");
-        }
-        JSONArray returns = new JSONArray();
-        if (returnWordRules.size() == 1) {
-            return returnWordRules;
-        }
-        for (int i = 0; i < returnWordRules.size(); i++) {
-            JSONArray unPassArray = new JSONArray();
-            JSONObject singleReturn = returnWordRules.getJSONObject(i);
-            JSONArray preFilter = singleReturn.getJSONArray("preFilter");
-            if (preFilter!= null) {
-                for (int j = 0; j < preFilter.size(); j++) {
-                    String rawString = preFilter.getString(j);
-                    if (rawString.equals("")) {
-                        continue;
-                    }
-                    String substring = rawString.substring(rawString.indexOf("(")+1, rawString.indexOf(")"));
-                    String[] params = substring.split(",");
-                    //重新处理入参
-                    resetParams(params,command);
-                    boolean b = FilterLoadService.getInstance().handlerFilterExecuted(command, handlerRawStringToType(params, rawString.substring(0, rawString.indexOf("("))), params);
-                    if (!b) {
-                        unPassArray.add(preFilter);
-                        break;
-                    }
-                }
-            }else {
-                //如果前置筛选器为空 直接返回当前返回
-                return new JSONArray(Collections.singletonList(singleReturn));
-            }
-            if (unPassArray.size() == 0) {
-                returns.add(singleReturn);
-            }
-        }
-        if (returns.size()<1) {
-            throw new RobotException("前置筛选器下没有正确的返回值");
-        }
-        return returns;
-    }
-
-    private static void resetParams (String[] params,JSONObject commands) {
-        for (int i = 0; i < params.length; i++) {
-            if (params[i].contains("爻入参")) {
-                params[i] = commands.getString(params[i]);
-            }
-        }
-    }
-
-
-
     /**
      * 处理原生语句
      */
@@ -111,15 +53,14 @@ public class CommandExecutedService {
             String param = params[i];
             if (params.length == 1 && !params[0].equals("")) {
                 finalString.append("(").append("String").append(")");
-            }else if (params.length == 1) {
+            } else if (params.length == 1) {
                 finalString.append("(").append(")");
-            }
-            else if (i == 0) {
+            } else if (i == 0) {
                 finalString.append("(");
                 finalString.append("String");
-            }else if (i == params.length -1){
+            } else if (i == params.length - 1) {
                 finalString.append(",String)");
-            }else {
+            } else {
                 finalString.append(",String");
             }
         }
@@ -129,18 +70,18 @@ public class CommandExecutedService {
     /**
      * 重复筛选器
      */
-    public static JSONObject repeatFilterReturn (JSONArray returnWordRules,JSONObject baseCommand) {
+    public static JSONObject repeatFilter(JSONArray returnWordRules, JSONObject baseCommand) {
         //如果就剩一个直接返回
         if (returnWordRules.size() == 1) {
             baseCommand.put("finalReturn",returnWordRules.getJSONObject(0));
-          return baseCommand;
-      }
-       Integer totalPresent = 0;
+            return baseCommand;
+        }
+        Integer totalPresent = 0;
         for (int i = 0; i < returnWordRules.size(); i++) {
             JSONObject singleObj = (JSONObject) returnWordRules.get(i);
             JSONArray repeatFilter = singleObj.getJSONArray("repeatFilter");
             //如果为空 那就要这条
-            if (repeatFilter == null|| repeatFilter.size() ==0) {
+            if (repeatFilter == null|| repeatFilter.size() <1) {
                 baseCommand.put("finalReturn",singleObj);
                 return baseCommand;
             }
@@ -171,12 +112,11 @@ public class CommandExecutedService {
     }
 
     /**
-     * 前增强器
+     * 增强器
      */
-    public static JSONObject preReturn (JSONObject command,JSONObject singleReturn) {
-        singleReturn = command.getJSONObject("finalReturn");
-        JSONArray preReturn = singleReturn.getJSONArray("preReturn");
-        if (preReturn != null) {
+    public static JSONObject preAdvice(JSONObject command) {
+        JSONArray preReturn = command.getJSONArray("preAdvice");
+        if (preReturn != null && preReturn.size()>0) {
             for (int i = 0; i < preReturn.size(); i++) {
                 String rawString = preReturn.getString(i);
                 String substring = rawString.substring(rawString.indexOf("(")+1, rawString.indexOf(")"));
@@ -198,6 +138,93 @@ public class CommandExecutedService {
     }
 
     /**
+     * 增强器
+     */
+    public static JSONObject advice(JSONObject command, JSONObject singleReturn) {
+        singleReturn = command.getJSONObject("finalReturn");
+        JSONArray preReturn = singleReturn.getJSONArray("advice");
+        if (preReturn != null) {
+            for (int i = 0; i < preReturn.size(); i++) {
+                String rawString = preReturn.getString(i);
+                String substring = rawString.substring(rawString.indexOf("(")+1, rawString.indexOf(")"));
+                String[] params = substring.split(",");
+                resetParams(params,command);
+                try {
+                    command = AdviceLoadService.getInstance().handlerAdviceExecuted(command,handlerRawStringToType(params, rawString.substring(0, rawString.indexOf("("))), params,i);
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                    throw new RobotException("系统错误");
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                    throw new RobotException("系统错误");
+                }
+            }
+        }
+        return command;
+
+    }
+
+
+    /**
+     * 处理内置入参
+     * @param params
+     * @param commands
+     */
+    private static void resetParams (String[] params,JSONObject commands) {
+        for (int i = 0; i < params.length; i++) {
+            LoggerService.info("打印参数 原始参数: " + params[i]);
+            CommCodeResultUtil.getFinalParams(commands,params[i]);
+        }
+    }
+
+
+
+    /**
+     * 筛选器
+     */
+    public static JSONArray filter(JSONObject command) {
+        JSONArray returnWordRules = command.getJSONArray("returnWordRules");
+        if (returnWordRules.size()<1) {
+            throw new RobotException("无效的机器编码 无法获取到任何一个可达到的回复");
+        }
+        JSONArray returns = new JSONArray();
+        for (int i = 0; i < returnWordRules.size(); i++) {
+            JSONArray unPassArray = new JSONArray();
+            JSONObject singleReturn = returnWordRules.getJSONObject(i);
+            JSONArray preFilter = singleReturn.getJSONArray("filter");
+            if (preFilter!= null && preFilter.size()>0) {
+                for (int j = 0; j < preFilter.size(); j++) {
+                    String rawString = preFilter.getString(j);
+                    if (rawString.equals("")) {
+                        continue;
+                    }
+                    String substring = rawString.substring(rawString.indexOf("(")+1, rawString.indexOf(")"));
+                    String[] params = substring.split(",");
+                    //重新处理入参
+                    resetParams(params,command);
+                    boolean b = FilterLoadService.getInstance().handlerFilterExecuted(command, handlerRawStringToType(params, rawString.substring(0, rawString.indexOf("("))), params);
+                    if (!b) {
+                        unPassArray.add(preFilter);
+                        break;
+                    }
+                }
+            }else {
+                //如果前置筛选器为空 直接返回当前返回
+                return new JSONArray(Collections.singletonList(singleReturn));
+            }
+            if (unPassArray.size() == 0) {
+                returns.add(singleReturn);
+            }
+        }
+        if (returns.size()<1) {
+            throw new RobotException("不满足筛选器条件");
+        }
+        return returns;
+    }
+
+
+
+    /**
      * 处理返回消息
      */
     public static MessageChain handleReturnMsg(JSONObject command) {
@@ -210,7 +237,7 @@ public class CommandExecutedService {
             String[] split = returnMsg.split("\\《|\\》");
             for (int i = 0; i < split.length; i++) {
                 String s = split[i];
-                if (s.contains("爻服务") || s.contains("爻入参")) {
+                if (s.contains("爻服务") || s.contains("爻入参") || s.contains("爻前置")) {
                   if (s.contains(".")) {
                       String[] split1 = s.split("\\.");
                       JSONObject tempObj = new JSONObject(command);

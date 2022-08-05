@@ -31,4 +31,12 @@ public class FavorAdvice {
         jsonObject.put("好感度",level);
         return jsonObject;
     }
+
+    @RobotAdvice(name = "好感度查询")
+    public static JSONObject favorSearch(JSONObject baseParams) {
+        JSONObject jsonObject = new JSONObject();
+        Integer level = FavorService.getFavor(0, baseParams.getString("qqId"));
+        jsonObject.put("好感度",level);
+        return jsonObject;
+    }
 }

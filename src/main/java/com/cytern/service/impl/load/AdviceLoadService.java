@@ -97,10 +97,44 @@ public class AdviceLoadService {
                 invoke =(JSONObject) method.invoke(null, command,params[0],params[1]);
             }else if (params.length ==3) {
                 invoke =(JSONObject) method.invoke(null, command,params[0],params[1],params[2]);
+            }else if (params.length == 4){
+                invoke =(JSONObject) method.invoke(null, command,params[0],params[1],params[2],params[3]);
             }else {
                 invoke = new JSONObject();
             }
             result.put("爻服务" + (i+1),  invoke);
+        return result;
+    }
+
+    /**
+     *  处理增强器
+     */
+    public  JSONObject handlerPreAdviceExecuted(JSONObject command, String key, String[] params,int i) throws InvocationTargetException, IllegalAccessException {
+        Method method = advices.get(key);
+        JSONObject result = new JSONObject(command);
+        if (method == null) {
+            LoggerService.error("can not find the method of the key :" + key);
+            result.put("msg","哇(脑子里好像出现了个bug)");
+            return result;
+        }
+        ArrayList<Object> paramsObject = new ArrayList<>();
+        paramsObject.add(command);
+        Collections.addAll(paramsObject,params);
+        JSONObject invoke;
+        if (params.length == 0 || (params.length == 1&& params[0].equals("") )) {
+            invoke =(JSONObject) method.invoke(null, command);
+        }else if(params.length == 1) {
+            invoke =(JSONObject) method.invoke(null, command,params[0]);
+        }else if (params.length ==2) {
+            invoke =(JSONObject) method.invoke(null, command,params[0],params[1]);
+        }else if (params.length ==3) {
+            invoke =(JSONObject) method.invoke(null, command,params[0],params[1],params[2]);
+        }else if (params.length == 4){
+            invoke =(JSONObject) method.invoke(null, command,params[0],params[1],params[2],params[3]);
+        }else {
+            invoke = new JSONObject();
+        }
+        result.put("爻前置" + (i+1),  invoke);
         return result;
     }
 }

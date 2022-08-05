@@ -20,17 +20,13 @@ public class ItemAdvice {
         JSONObject request = new JSONObject();
         request.put("itemList",items);
         JSONObject reduceObject =new JSONObject();
+        JSONObject returnData = new JSONObject();
         try {
              reduceObject = ItemFeign.itemReduce(items, params.getString("qqId"));
         } catch (RobotException e) {
-            if (601 == e.getCode()) {
-                MessageSenderUtil.exceptionSendBreak((Contact) params.get("subject"),e.getMessage());
-            }else {
-                MessageSenderUtil.exceptionSendBreak((Contact) params.get("subject"), e.getMessage());
-            }
+            returnData.put("返回结果","失败");
         }
-        JSONObject returnData = new JSONObject();
-        returnData.put("结果",true);
+        returnData.put("返回结果","成功");
         return returnData;
     }
 

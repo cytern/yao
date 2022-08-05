@@ -34,15 +34,15 @@
             "activeService": "通用消息",
             "returnWordRules" : [
                 {
-                    "preFilter" : ["最小好感度(0)"],
+                    "filter" : ["最小好感度(0)"],
                     "repeatFilter": [],
-                    "preReturn": ["好感度增加(0)"],
+                    "advice": ["好感度增加(0)"],
                     "returnMsg" : "阿斯对你的好感度是《爻服务1.好感度》"
                 },
                 {
-                    "preFilter" : ["最小好感度(100)"],
+                    "filter" : ["最小好感度(100)"],
                     "repeatFilter": [],
-                    "preReturn": ["好感度增加(0)"],
+                    "advice": ["好感度增加(0)"],
                     "returnMsg" : "我什么好感度你不知道吗"
                 }
             ]
@@ -61,9 +61,9 @@
             "activeService": "通用消息",
             "returnWordRules" : [
                 {
-                    "preFilter" : [],
+                    "filter" : [],
                     "repeatFilter": [],
-                    "preReturn": ["物品消耗(遗失的美好,-1)","随机扭蛋(10)"],
+                    "advice": ["物品消耗(遗失的美好,-1)","随机扭蛋(10)"],
                     "returnMsg" : "你的扭蛋结果是  \n《爻服务2.itemNames》"
                 }
             ]
@@ -73,9 +73,9 @@
             "activeService": "通用消息",
             "returnWordRules" : [
                 {
-                    "preFilter" : [],
+                    "filter" : [],
                     "repeatFilter": [],
-                    "preReturn": ["我的物品列表()"],
+                    "advice": ["我的物品列表()"],
                     "returnMsg" : "你的背包里有  \n《爻服务1.物品栏》"
                 }
             ]
@@ -85,9 +85,9 @@
             "activeService": "通用消息",
             "returnWordRules" : [
                 {
-                    "preFilter" : [],
+                    "filter" : [],
                     "repeatFilter": [],
-                    "preReturn": ["检视物品(爻入参1)"],
+                    "advice": ["检视物品(爻入参1)"],
                     "returnMsg" : "《爻服务1.物品图片》 \n《爻服务1.物品介绍》"
                 }
             ]
@@ -95,12 +95,19 @@
         {
             "activeWordRules" : [ "海丽乞巧","海丽祈巧","海丽77","77海丽"],
             "activeService": "通用消息",
+            "preAdvice": ["物品消耗(七夕的象征,-1)"],
             "returnWordRules" : [
                 {
-                    "preFilter" : [],
+                    "filter" : ["相等筛选(爻前置1.返回结果,成功)"],
                     "repeatFilter": [],
-                    "preReturn": ["七夕乞巧()"],
+                    "advice": ["七夕乞巧()"],
                     "returnMsg" : "《爻服务1.返回结果》《爻服务1.图片》"
+                },
+                {
+                    "filter" : ["相等筛选(爻前置1.返回结果,失败)"],
+                    "repeatFilter": [],
+                    "advice": [],
+                    "returnMsg" : "七夕已过 织女已经离开人间界 消耗 <七夕的象征> 重回"
                 }
             ]
         }
