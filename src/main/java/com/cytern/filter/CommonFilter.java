@@ -11,8 +11,6 @@ import java.util.logging.Logger;
 public class CommonFilter {
     @RobotFilter(name = "相等筛选")
     public static boolean equalsFilter(JSONObject params,String arg1,String arg2) {
-        LoggerService.info(arg1);
-        LoggerService.info(arg2);
         return arg1.equals(arg2);
     }
 

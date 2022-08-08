@@ -64,11 +64,10 @@ public class GashaponAdvice {
         });
         JSONObject finalJson = singleJson.get();
         if (finalJson.isEmpty()) {
-            MessageChainBuilder chain = new MessageChainBuilder();
-            chain.append("看不见！").append(ConfigLoadService.getInstance().getDefaultRobotName()).append("从来没见过那个哎");
-            MessageSenderUtil.normalSend( (Contact) params.get("subject"),chain.build());
-            throw new RobotException("找不到指定物品");
+            backJson.put("返回结果","失败");
+            return backJson;
         }
+        backJson.put("返回结果","成功");
         backJson.put("物品图片",finalJson.getString("itemImgName"));
         stringBuilder.append("物品名称:").append(finalJson.getString("itemName")).append("\n")
                 .append("物品类别:").append(finalJson.getString("itemType")).append("\n")

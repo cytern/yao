@@ -21,12 +21,12 @@ public class ItemAdvice {
         request.put("itemList",items);
         JSONObject reduceObject =new JSONObject();
         JSONObject returnData = new JSONObject();
+        returnData.put("返回结果","成功");
         try {
              reduceObject = ItemFeign.itemReduce(items, params.getString("qqId"));
         } catch (RobotException e) {
             returnData.put("返回结果","失败");
         }
-        returnData.put("返回结果","成功");
         return returnData;
     }
 

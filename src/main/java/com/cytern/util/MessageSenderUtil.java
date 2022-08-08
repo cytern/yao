@@ -1,6 +1,7 @@
 package com.cytern.util;
 
 import cn.hutool.core.io.FileUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.cytern.exception.RobotException;
 import com.cytern.pojo.ErrorCode;
 import com.cytern.service.impl.load.base.AssetsUnzipLoadService;
@@ -15,6 +16,7 @@ import net.mamoe.mirai.utils.ExternalResource;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * 信息发送工具
@@ -24,8 +26,17 @@ public class MessageSenderUtil {
     /**
      * 基础信息发送
      */
-    public static void normalSend(Contact subject, MessageChain finalMsg) {
-        subject.sendMessage(finalMsg);
+    public static void normalSend(Contact subject, List<MessageChain> finalMsg) {
+        for (MessageChain chain : finalMsg) {
+            subject.sendMessage(chain);
+        }
+    }
+
+    public static void fastSend(JSONObject command, String finalMsg) {
+        MessageChainBuilder singleMessages = new MessageChainBuilder();
+        singleMessages.append(finalMsg);
+        Contact contact =(Contact) command.get("subject");
+        contact.sendMessage(singleMessages.build());
     }
 
     /**
@@ -67,11 +78,4 @@ public class MessageSenderUtil {
         }
     }
 
-
-    public static void exceptionSendBreak(Contact subject,String msg) {
-        MessageChainBuilder singleMessages = new MessageChainBuilder();
-        singleMessages.append(msg);
-        normalSend(subject,singleMessages.build());
-        throw new RobotException(msg);
-    }
  }

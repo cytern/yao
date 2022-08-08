@@ -9,21 +9,31 @@ public class CommCodeResultUtil {
      * @param params
      * @param arg2
      */
-    public static void getFinalParams(JSONObject params, String arg2) {
-        LoggerService.info("打印入参: "  );
-        LoggerService.info("打印替换原始 " + arg2);
+    public static String getFinalParams(JSONObject params, String arg2) {
         if (arg2.contains("爻前置") || arg2.contains("爻入参") || arg2.contains("爻服务")) {
-            String[] strings = arg2.split(".");
+            String[] strings = arg2.split("\\.");
             JSONObject tempArgs = new JSONObject();
             tempArgs.putAll(params);
             for (int i = 0; i < strings.length; i++) {
-                if (i == strings.length-1) {
+                if (i == strings.length - 1) {
                     arg2 = tempArgs.getString(strings[i]);
                     break;
-                }else {
+                } else {
                     tempArgs = tempArgs.getJSONObject(strings[i]);
                 }
             }
+            return arg2;
+        }else {
+            return arg2;
         }
+    }
+
+    public static void main(String[] args) {
+        JSONObject jsonObject = new JSONObject();
+        JSONObject jsonObject1 = new JSONObject();
+        jsonObject1.put("返回结果","失败");
+        jsonObject.put("爻前置1",jsonObject1);
+        String finalParams = getFinalParams(jsonObject, "爻前置1.返回结果");
+        System.out.println();
     }
 }

@@ -16,6 +16,7 @@ import net.mamoe.mirai.message.data.MessageChain;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * 基础消息服务
@@ -30,13 +31,10 @@ public class CommonIOCommand {
     public static JSONObject baseCommandHandler (JSONObject commands) {
         //基本消息服务应该分以下几步走
         JSONArray preReturns = null;
-        LoggerService.info("前置增强器 前 参数 ");
         //前置增强器
         commands = CommandExecutedService.preAdvice(commands);
-        LoggerService.info("前置增强器 通过 参数 ");
         //筛选器
         preReturns = CommandExecutedService.filter(commands);
-        LoggerService.info("筛选器 通过 参数 ");
         JSONObject repeatFilterReturn = null;
 
         //重复选择器
@@ -45,15 +43,12 @@ public class CommonIOCommand {
         } catch (RobotException e) {
             LoggerService.error(e.getMessage());
         }
-        LoggerService.info("选择器 通过 参数 ");
 
         //增强器
         JSONObject newCommand = null;
         newCommand = CommandExecutedService.advice(repeatFilterReturn, null);
 
-
-        LoggerService.info("增强器 通过 参数 ");
-        MessageChain msg = null;
+        List<MessageChain> msg = null;
 
         //最终参数处理
         try {
@@ -62,6 +57,7 @@ public class CommonIOCommand {
             LoggerService.error(e.getMessage());
         }
         MessageSenderUtil.normalSend( (Contact) commands.get("subject"),msg);
+
         return null;
     }
 

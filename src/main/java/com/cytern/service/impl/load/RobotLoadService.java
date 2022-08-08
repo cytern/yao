@@ -25,10 +25,13 @@ public final class RobotLoadService {
      * 设计一种全新的 支持动态参数的active key 整体结果为对key进行拆分 第一个hashmap存储字符集的第一个key
      */
     private final HashMap<String, Object> actviceRobotCommand;
+
+    private final HashMap<String,JSONObject> robotEvent;
     private RobotLoadService() {
 
         robotMap = new HashMap<>();
         robotCommand = new HashMap<>();
+        robotEvent = new HashMap<>();
         //加载机器人
         HashMap<String, JSONObject> robotLoader = AssetsUnzipLoadService.getInstance().getMods().get("robotLoader");
         robotLoader.forEach((key,value) -> {
@@ -37,13 +40,18 @@ public final class RobotLoadService {
             JSONArray command = value.getJSONObject("main").getJSONArray("robotCommand");
             for (int i = 0; i < command.size(); i++) {
                 JSONObject singleCommand = command.getJSONObject(i);
-                JSONArray activeWordRules = singleCommand.getJSONArray("activeWordRules");
 
-                if (activeWordRules != null) {
-                    for (int j = 0; j < activeWordRules.size(); j++) {
-                        String ruleString = activeWordRules.getString(j);
-                            robotCommand.put(ruleString,singleCommand);
+                if (singleCommand.getString("activeService").equals("通用消息")) {
+                    JSONArray activeWordRules = singleCommand.getJSONArray("activeWordRules");
+
+                    if (activeWordRules != null) {
+                        for (int j = 0; j < activeWordRules.size(); j++) {
+                            String ruleString = activeWordRules.getString(j);
+                                robotCommand.put(ruleString,singleCommand);
+                        }
                     }
+                }else if (singleCommand.getString("activeService").equals("通用事件")) {
+                    robotEvent.put(singleCommand.getString("activeKey"),singleCommand);
                 }
             }
         });
@@ -67,5 +75,9 @@ public final class RobotLoadService {
 
     public HashMap<String, JSONObject> getRobotCommand() {
         return robotCommand;
+    }
+
+    public HashMap<String, JSONObject> getRobotEvent() {
+        return robotEvent;
     }
 }

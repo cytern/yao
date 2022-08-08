@@ -7,9 +7,11 @@ import com.cytern.exception.RobotException;
 import com.cytern.pojo.ErrorCode;
 import com.cytern.service.impl.load.AdviceLoadService;
 import com.cytern.service.impl.load.FilterLoadService;
+import com.cytern.service.impl.load.RobotLoadService;
 import com.cytern.service.impl.load.base.RobotCommandLoadService;
 import com.cytern.util.CommCodeResultUtil;
 import com.cytern.util.MessageSenderUtil;
+import com.cytern.util.RobotCachedUtil;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.message.data.Image;
 import net.mamoe.mirai.message.data.MessageChain;
@@ -17,7 +19,9 @@ import net.mamoe.mirai.message.data.MessageChainBuilder;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * 指令执行服务
@@ -123,7 +127,7 @@ public class CommandExecutedService {
                 String[] params = substring.split(",");
                 resetParams(params,command);
                 try {
-                    command = AdviceLoadService.getInstance().handlerAdviceExecuted(command,handlerRawStringToType(params, rawString.substring(0, rawString.indexOf("("))), params,i);
+                    command = AdviceLoadService.getInstance().handlerPreAdviceExecuted(command,handlerRawStringToType(params, rawString.substring(0, rawString.indexOf("("))), params,i);
                 } catch (InvocationTargetException e) {
                     e.printStackTrace();
                     throw new RobotException("系统错误");
@@ -172,8 +176,7 @@ public class CommandExecutedService {
      */
     private static void resetParams (String[] params,JSONObject commands) {
         for (int i = 0; i < params.length; i++) {
-            LoggerService.info("打印参数 原始参数: " + params[i]);
-            CommCodeResultUtil.getFinalParams(commands,params[i]);
+            params[i] = CommCodeResultUtil.getFinalParams(commands,params[i]);
         }
     }
 
@@ -203,16 +206,16 @@ public class CommandExecutedService {
                     //重新处理入参
                     resetParams(params,command);
                     boolean b = FilterLoadService.getInstance().handlerFilterExecuted(command, handlerRawStringToType(params, rawString.substring(0, rawString.indexOf("("))), params);
+                    LoggerService.info("比较器执行结果 " + b);
                     if (!b) {
                         unPassArray.add(preFilter);
                         break;
                     }
                 }
+                if (unPassArray.size() == 0) {
+                    returns.add(singleReturn);
+                }
             }else {
-                //如果前置筛选器为空 直接返回当前返回
-                return new JSONArray(Collections.singletonList(singleReturn));
-            }
-            if (unPassArray.size() == 0) {
                 returns.add(singleReturn);
             }
         }
@@ -227,12 +230,13 @@ public class CommandExecutedService {
     /**
      * 处理返回消息
      */
-    public static MessageChain handleReturnMsg(JSONObject command) {
+    public static List<MessageChain> handleReturnMsg(JSONObject command) {
         JSONObject finalReturn = command.getJSONObject("finalReturn");
+        ArrayList<MessageChain> messageChains = new ArrayList<>();
         String returnMsg = finalReturn.getString("returnMsg");
         MessageChainBuilder chain = new MessageChainBuilder();
         if (!returnMsg.contains("《") && !returnMsg.contains("》")) {
-            return chain.append(returnMsg).build();
+            return Collections.singletonList(chain.append(returnMsg).build());
         }else {
             String[] split = returnMsg.split("\\《|\\》");
             for (int i = 0; i < split.length; i++) {
@@ -274,12 +278,28 @@ public class CommandExecutedService {
 
                 }else if (s.contains("爻昵称")){
                     chain.append(command.getString("qqName"));
-                }else {
+                }else if (s.contains("爻分隔")){
+                    messageChains.add(chain.build());
+                    chain = new MessageChainBuilder();
+                }else if (s.contains("爻事件")){
+                    if (s.contains(".")) {
+                        String[] split1 = s.split("\\.");
+                        if (split1.length == 2) {
+                            JSONObject jsonObject = RobotLoadService.getInstance().getRobotEvent().get(split1[1]);
+                            if (jsonObject != null && !jsonObject.isEmpty()) {
+                                RobotCachedUtil.getInstance().getEventCache().put(command.getString("qqId"),jsonObject);
+                            }
+                        }
+                    }
+                }
+
+                else {
                     chain.append(s);
                 }
             }
         }
-        return chain.build();
+        messageChains.add(chain.build());
+        return messageChains;
 //        return null;
     }
 

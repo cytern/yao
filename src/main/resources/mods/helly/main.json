@@ -30,41 +30,114 @@
      },
     "robotCommand": [
         {
-            "activeWordRules" : [ "海莉我的好感度","海莉我的好感度是"],
+            "activeWordRules" : ["海丽怎么看我"],
+            "preAdvice": ["好感度查询()"],
             "activeService": "通用消息",
             "returnWordRules" : [
                 {
-                    "filter" : ["最小好感度(0)"],
+                    "filter" : ["小于筛选(0,爻前置1.好感度)"],
                     "repeatFilter": [],
-                    "advice": ["好感度增加(0)"],
-                    "returnMsg" : "阿斯对你的好感度是《爻服务1.好感度》"
+                    "advice": ["好感度增加(3)"],
+                    "returnMsg" : "emmmm 你最好离我远点 《爻图片.HellyRobot.Normal_r0_c0.png》"
                 },
                 {
-                    "filter" : ["最小好感度(100)"],
+                    "filter" : ["相等筛选(爻前置1.好感度,0)"],
                     "repeatFilter": [],
-                    "advice": ["好感度增加(0)"],
-                    "returnMsg" : "我什么好感度你不知道吗"
-                }
-            ]
-        },
-        {
-            "activeWordRules" : [ "我宣你啊海丽","海莉我好喜欢你","海莉我爱你","海莉我好喜欢"],
-            "activeService": "通用消息",
-            "returnWordRules" : [
+                    "advice": ["好感度增加(5)"],
+                    "returnMsg" : "emmmm 啊 你是新来的农夫吧 很高兴认识你！ 《爻图片.HellyRobot.Normal_r0_c0.png》"
+                },
                 {
-                    "returnMsg" : "我也喜欢你  \n 《爻图片.HellyRobot.Normal_r2_c0.png》"
+                    "filter" : ["区间筛选(1,爻前置1.好感度,100)"],
+                    "repeatFilter": [],
+                    "advice": [],
+                    "returnMsg" : "我认得你 《爻昵称》！ 我时有看到你匆匆忙忙 大都市的人都是这样的嘛? 《爻图片.HellyRobot.Normal_r0_c0.png》"
+                },
+                {
+                    "filter" : ["区间筛选(100,爻前置1.好感度,500)"],
+                    "repeatFilter": [],
+                    "advice": [],
+                    "returnMsg" : "呀 《爻昵称》，为什么突然这么问？ 我觉得你很可爱 《爻图片.HellyRobot.Normal_r0_c1.png》"
+                },
+                {
+                    "filter" : ["区间筛选(500,爻前置1.好感度,5000)"],
+                    "repeatFilter": [],
+                    "advice": [],
+                    "returnMsg" : "你是在问我嘛？ 《爻昵称》 挺复杂的，但不是讨厌你的那种！ 《爻图片.HellyRobot.Normal_r1_c1.png》"
+                },
+                {
+                    "filter" : ["大于筛选(5000,爻前置1.好感度)"],
+                    "repeatFilter": [],
+                    "advice": [],
+                    "returnMsg" : "我喜欢你！ 《爻昵称》 《爻图片.HellyRobot.Normal_r2_c0.png》"
                 }
             ]
         },
         {
-            "activeWordRules" : [ "十连扭蛋 海莉","海莉 十连","海丽 十连","给我十连 海丽"],
+            "activeWordRules" : [ "海丽我的好感度是"],
             "activeService": "通用消息",
+            "preAdvice": ["好感度查询()"],
             "returnWordRules" : [
                 {
                     "filter" : [],
                     "repeatFilter": [],
-                    "advice": ["物品消耗(遗失的美好,-1)","随机扭蛋(10)"],
-                    "returnMsg" : "你的扭蛋结果是  \n《爻服务2.itemNames》"
+                    "advice": [],
+                    "returnMsg" : "如果非要说一个数字的话，海丽觉得对你的好感度是 《爻前置1.好感度》 《爻图片.HellyRobot.Normal_r0_c1.png》"
+                }
+                ]
+        },
+        {
+            "activeWordRules" : [ "我宣你啊海丽","海丽我好喜欢你","海丽我爱你","海丽我好喜欢","海丽 我喜欢你"],
+            "activeService": "通用消息",
+            "preAdvice": ["好感度查询()"],
+            "returnWordRules" : [
+                {
+                    "filter" : ["相等筛选(爻前置1.好感度,0)"],
+                    "repeatFilter": [],
+                    "advice": ["好感度增加(-100)"],
+                    "returnMsg" : "emmmm 这是大城市的自我介绍嘛？你最好离我远点\n[海丽觉得你是辫太]《爻图片.HellyRobot.Normal_r5_c1.png》"
+                },
+                {
+                    "filter" : ["区间筛选(1,爻前置1.好感度,100)"],
+                    "repeatFilter": [],
+                    "advice": ["好感度增加(-80)"],
+                    "returnMsg" : "这是新流行的玩笑嘛？我们才刚认识！\n[海丽觉得你很离谱] 《爻图片.HellyRobot.Normal_r5_c1.png》"
+                },
+                {
+                    "filter" : ["区间筛选(100,爻前置1.好感度,500)"],
+                    "repeatFilter": [],
+                    "advice": ["好感度增加(-50)"],
+                    "returnMsg" : "虽然你很可爱 但是你不要得意忘形了！《爻昵称》 \n[海丽觉得你很轻浮]《爻图片.HellyRobot.Normal_r1_c1.png》"
+                },
+                {
+                    "filter" : ["区间筛选(500,爻前置1.好感度,5000)"],
+                    "repeatFilter": [],
+                    "advice": [],
+                    "returnMsg" : "谢谢你，《爻昵称》但我想还不到那个时候 《爻图片.HellyRobot.Normal_r1_c1.png》"
+                },
+                {
+                    "filter" : ["大于筛选(5000,爻前置1.好感度)"],
+                    "repeatFilter": [],
+                    "advice": ["好感度增加(50)"],
+                    "returnMsg" : "我也喜欢你！《爻昵称》 《爻图片.HellyRobot.Normal_r1_c0.png》"
+                }
+            ]
+        },
+        {
+            "activeWordRules" : [ "十连扭蛋 海莉","海丽 十连","十连海丽","给我十连 海丽","海丽十连","十连 海丽"],
+            "activeService": "通用消息",
+            "preAdvice": ["物品消耗(遗失的美好,-10)"],
+            "returnWordRules" : [
+                {
+                    "filter" : ["相等筛选(爻前置1.返回结果,成功)"],
+                    "repeatFilter": [],
+                    "advice": ["随机扭蛋(10)"],
+                    "returnMsg" : "[海丽拉下了扭蛋机的拉杆 扭蛋们掉了出来] 结果是:  \n《爻服务2.itemNames》"
+                },
+                {
+                    "filter" : ["相等筛选(爻前置1.返回结果,失败)"],
+                    "repeatFilter": [],
+                    "advice": [],
+                    "returnMsg" : "[海丽翻了翻你的背包 好像没有找到 <遗失的美好>] 《爻图片.HellyRobot.Normal_r3_c1.png》"
                 }
             ]
         },
@@ -76,19 +149,25 @@
                     "filter" : [],
                     "repeatFilter": [],
                     "advice": ["我的物品列表()"],
-                    "returnMsg" : "你的背包里有  \n《爻服务1.物品栏》"
+                    "returnMsg" : "[海丽翻了翻你的背包]  \n《爻服务1.物品栏》"
                 }
             ]
         },
         {
             "activeWordRules" : [ "海丽看看 《爻入参》"],
             "activeService": "通用消息",
+            "preAdvice": ["检视物品(爻入参1)"],
             "returnWordRules" : [
                 {
-                    "filter" : [],
+                    "filter" : ["相等筛选(爻前置1.返回结果,成功)"],
                     "repeatFilter": [],
                     "advice": ["检视物品(爻入参1)"],
-                    "returnMsg" : "《爻服务1.物品图片》 \n《爻服务1.物品介绍》"
+                    "returnMsg" : "[海丽拿出一本物品字典,仔细翻找了一会] 啊哈 找到了 \n 《爻服务1.物品图片》 \n《爻服务1.物品介绍》"
+                }, {
+                    "filter" : ["相等筛选(爻前置1.返回结果,失败)"],
+                    "repeatFilter": [],
+                    "advice": ["检视物品(爻入参1)"],
+                    "returnMsg" : "[海丽拿出一本物品字典,仔细翻找了一会] 你说的东西海丽根本找不到！ 《爻图片.HellyRobot.Normal_r5_c1.png》"
                 }
             ]
         },
@@ -107,7 +186,61 @@
                     "filter" : ["相等筛选(爻前置1.返回结果,失败)"],
                     "repeatFilter": [],
                     "advice": [],
-                    "returnMsg" : "七夕已过 织女已经离开人间界 消耗 <七夕的象征> 重回"
+                    "returnMsg" : "七夕已过 织女已经离开人间界 消耗 <七夕的象征> 可重启乞巧"
+                }
+            ]
+        },
+        {
+            "activeWordRules" : [ "海丽送你 《爻入参》"],
+            "activeService": "通用消息",
+            "preAdvice": ["物品消耗(爻入参1,-1)"],
+            "returnWordRules" : [
+                {
+                    "filter" : ["相等筛选(爻前置1.返回结果,成功)","相等筛选(爻入参1,海丽的胸针)"],
+                    "repeatFilter": [],
+                    "advice": ["好感度增加(-50)"],
+                    "returnMsg" : "啊？竟然是这个! 《爻昵称》,如果这就是你的决定的话,我会尊重你的决定 《爻分隔》 但我还是想最后问一遍,《爻昵称》你确定吗？ 《爻事件.海丽送反定情信物》 "
+                },
+                {
+                    "filter" : ["相等筛选(爻前置1.返回结果,失败)"],
+                    "repeatFilter": [],
+                    "advice": [],
+                    "returnMsg" : "七夕已过 织女已经离开人间界 消耗 <七夕的象征> 可重启乞巧"
+                }
+            ]
+        },
+        {
+            "activeWordRules" : [ "海丽我们结束了"],
+            "activeService": "通用消息",
+            "preAdvice": [],
+            "returnWordRules" : [
+                {
+                    "filter" : [],
+                    "repeatFilter": [],
+                    "advice": ["好感度增加(-50)"],
+                    "returnMsg" : "《爻昵称》,如果这就是你的决定的话,我会尊重你的决定 《爻图片.HellyRobot.Normal_r1_c0.png》《爻分隔》 但我还是想最后问一遍,《爻昵称》你确定吗？ 《爻图片.HellyRobot.Normal_r0_c0.png》《爻事件.海丽送反定情信物》 "
+                }
+            ]
+        },
+        {
+            "acceptWordRules" : [ "我确定","我再想想"],
+            "activeKey" : "海丽送反定情信物",
+            "activeService": "通用事件",
+            "preAdvice": [],
+            "returnWordRules" : [
+                {
+                    "activeAccept" : "我确定",
+                    "filter" : [],
+                    "repeatFilter": [],
+                    "advice": ["好感度增加(-5000)"],
+                    "returnMsg" : "...... 我会尊重你的决定 我们结束了！ 《爻图片.HellyRobot.Normal_r5_c0.png》 "
+                },
+                {
+                    "activeAccept" : "我再想想",
+                    "filter" : [],
+                    "repeatFilter": [],
+                    "advice": ["好感度增加(-50)"],
+                    "returnMsg" : "下次不要再开这种玩笑了 《爻图片.HellyRobot.Normal_r2_c1.png》 "
                 }
             ]
         }

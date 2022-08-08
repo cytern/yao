@@ -23,11 +23,14 @@ public class RobotCachedUtil {
     private final LRUCache<String, JSONObject> typeItemCache;
 
     private final TimedCache<String,String> prayForResult;
+
+    private final LRUCache<String,JSONObject> eventCache;
     private RobotCachedUtil() {
          imageCache = CacheUtil.newTimedCache(1000*60*60*1);
          favorCache = CacheUtil.newTimedCache(1000*60*60*24);
          typeItemCache = CacheUtil.newLRUCache(10);//存十个类型的物品
         prayForResult = CacheUtil.newTimedCache(1000*60*60*1);
+        eventCache = CacheUtil.newLRUCache(500); //存500个事件
     }
 
     public static RobotCachedUtil getInstance() {
@@ -55,6 +58,10 @@ public class RobotCachedUtil {
 
     public TimedCache<String,String> getPrayForResult() {
         return prayForResult;
+    }
+
+    public LRUCache<String, JSONObject> getEventCache() {
+        return eventCache;
     }
 }
 
