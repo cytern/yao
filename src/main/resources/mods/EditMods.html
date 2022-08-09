@@ -1,0 +1,77 @@
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <script src="https://unpkg.com/vue@next"></script>
+    <!-- import CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css">
+    <!-- import JavaScript -->
+    <script src="https://unpkg.com/element-plus"></script>
+    <title>可视化模组编辑器</title>
+</head>
+<body>
+<div id="app">
+        <el-row>
+            <el-button></el-button>
+        </el-row>
+        <el-row>
+            <el-col :span="12"><div class="grid-content ep-bg-purple" /></el-col>
+            <el-col :span="12"><div class="grid-content ep-bg-purple-light" /></el-col>
+        </el-row>
+        <el-row>
+            <el-col :span="8"><div class="grid-content ep-bg-purple" /></el-col>
+            <el-col :span="8"><div class="grid-content ep-bg-purple-light" /></el-col>
+            <el-col :span="8"><div class="grid-content ep-bg-purple" /></el-col>
+        </el-row>
+        <el-row>
+            <el-col :span="6"><div class="grid-content ep-bg-purple" /></el-col>
+            <el-col :span="6"><div class="grid-content ep-bg-purple-light" /></el-col>
+            <el-col :span="6"><div class="grid-content ep-bg-purple" /></el-col>
+            <el-col :span="6"><div class="grid-content ep-bg-purple-light" /></el-col>
+        </el-row>
+        <el-row>
+            <el-col :span="4"><div class="grid-content ep-bg-purple" /></el-col>
+            <el-col :span="4"><div class="grid-content ep-bg-purple-light" /></el-col>
+            <el-col :span="4"><div class="grid-content ep-bg-purple" /></el-col>
+            <el-col :span="4"><div class="grid-content ep-bg-purple-light" /></el-col>
+            <el-col :span="4"><div class="grid-content ep-bg-purple" /></el-col>
+            <el-col :span="4"><div class="grid-content ep-bg-purple-light" /></el-col>
+        </el-row>
+</div>
+<script>
+    const App = {
+        data() {
+            return {
+                message: "Hello Element Plus",
+            };
+        },
+        computed:{
+            msg(){
+                console.log("msg==");
+                return '789456';
+            }
+        },
+        methods:{
+            conOut(){
+                console.log("调用输出",this.msg);
+
+            }
+        },
+        beforeMount(){
+            console.log("挂载前生命周期");
+        },
+        mounted(){
+            console.log("挂载完成生命周期");
+        },
+        watch:{
+            'message'(){
+                console.log("监视器调用");
+            }
+        }
+    };
+    const app = Vue.createApp(App);
+    app.use(ElementPlus);
+    app.mount("#app");
+</script>
+</body>
+</html>
