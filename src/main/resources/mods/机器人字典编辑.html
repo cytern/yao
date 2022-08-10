@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
+</head>
+
+<body>
+<div id="app">
+<!--  vue + thymeleaf 写法 狗看了都哭了-->
+    <!--        标题-->
+    <el-row style="margin-bottom: 30px">
+        <el-col :span="6">
+            <span style="font-size: larger">简易版机器人字典修改器</span>
+        </el-col>
+        <el-col :span="6">
+            <el-upload
+                    class="upload-demo"
+                    action = "http://82.157.40.205:2030/openData/addJsonFile"
+                    :before-upload="checkIsParamsOk"
+                    :on-success="readFile">
+                <el-button size="small" type="primary">上传已有的机器人文件</el-button>
+                <div slot="tip" class="el-upload__tip">只能上传main.json文件</div>
+            </el-upload>
+        </el-col>
+    </el-row>
+    <el-row>
+        <el-col :span="6">
+            <el-input v-model="qqId" placeholder="请输入qq号或者其他凭证"></el-input>
+        </el-col>
+        <el-col :span="6">
+            <el-select v-model="chooseTypeOptionValue" placeholder="请选择你的操作类型">
+                <el-option v-for="item in editTypeOptions" :key="item.value" :label="item.label"
+                           :value="item.value"></el-option>
+            </el-select>
+        </el-col>
+        <el-col :span="6">
+            <el-input v-model="activeCode" placeholder="请输入你的模组编码"></el-input>
+        </el-col>
+    </el-row>
+<!--    分割线-->
+    <el-divider></el-divider>
+    <template v-if="!showItem">
+    <el-row style="margin-bottom: 30px">
+        <el-col :span="6">
+           <el-button @click="reloadFile" type="warning">更新并重载</el-button>
+        </el-col>
+        <el-col :span="6">
+            <el-button @click="reloadFile" type="success">下载新的文件</el-button>
+        </el-col>
+        <el-col :span="6">
+            <el-button @click="newRobotFile" type="danger">新建并覆盖</el-button>
+        </el-col>
+    </el-row>
+    <el-row >
+        <el-col :span="6">
+            <el-input v-model="filter.key" placeholder="筛选的key值"></el-input>
+        </el-col>
+    </el-row>
+     <el-row>
+         <el-col :span="6">
+             <el-input></el-input>
+         </el-col>
+     </el-row>
+    </template>
+    <el-divider></el-divider>
+
+<!--    第二行为设置页面-->
+
+</div>
+</body>
+
+
+
+<script>
+    new Vue({
+        el: '#app',
+        data: function () {
+            return {
+                requestUrl: "http://82.157.40.205:2060/server/openData/",
+                editTypeOptions : [
+                    {
+                        value: "1",
+                        label: "机器人字典"
+                    },
+                    {
+                        value: "2",
+                        label: "物品字典"
+                    }
+                ],
+                chooseTypeOptionValue : null,
+                qqId : null,
+                activeCode: null,
+                showItem: false,
+                filter: {
+                    key: null,
+                },
+                robotKeyJson : {
+
+                },
+                robotItemJson : {
+
+                }
+            }
+        },
+        mounted(){
+            // this.getConfig()
+            // setInterval(this.getConfig,10000)
+        },
+        methods: {
+            checkIsParamsOk: function () {
+                console.log("到这里里")
+
+                  if (this.qqId === null ||this.activeCode === null || this.chooseTypeOptionValue == null) {
+                      this.$message.error('qq号或凭证 模组编码 操作类型 必填');
+                      return false;
+                  }else {
+                      return true;
+                  }
+            },
+            readFile: function (response,file,fileList) {
+                console.log("处理读取文件事件")
+                console.log(response)
+            },
+            sendToken: function () {
+                let that =this;
+               let tempData = {
+                   baseUrl: this.baseUrl,
+                   cpuCoreId: this.cpuCoreId,
+                   live: this.live,
+                   status: this.status,
+                   jsoupSetting: this.jsoupSetting
+               }
+                $.ajax({
+                    type: 'POST',
+                    url: "http://localhost:2040/setConfig",
+                    dataType: "json",
+                    contentType:'application/json;charset=utf-8',
+                    data: JSON.stringify(tempData),
+                    success: function (res) {
+                        if (res.code == "success") {
+                            that.$message.success(res.msg)
+                            that.getConfig()
+                        }
+                    },
+                });
+
+            },
+            changeTestModel() {
+              this.jsoupSetting.executor.testModel = !this.jsoupSetting.executor.testModel
+              this.sendToken()
+            },
+            getConfig: function () {
+                let that = this
+                $.ajax({
+                    url: "http://localhost:2040/getConfig",
+
+                    dataType: "json",
+                    type: "get",
+
+                    success: function(result) {  //这里就是我出错的地方
+                       that.live = result.live
+                        that.liveProcess = result.runStatus
+                        that.status = result.serveStatus
+                        that.jsoupSetting = result.jsoupSetting
+                    },
+                    error: function(data) {
+                        alert("请求出错");
+                        alert(data);
+                    }
+                });
+            },
+            reloadFile() {
+                 console.log("处理读取文件事件")
+            },
+            newRobotFile () {
+                let that = this
+                $.ajax({
+                    url: that.requestUrl + "newJsonFile" + "?" + "qqId=" + that.qqId +  "&type=" + that.chooseTypeOptionValue + "&activeCode=" +that.activeCode,
+                    dataType: "json",
+                    type: "get",
+                    success: function(result) {  //这里就是我出错的地方
+                        that.$message.success(result)
+                        console.log(result)
+                    },
+                    error: function(data) {
+                        that.$message.error(data)
+                    }
+                });
+            }
+        }
+    })
+</script>
+
+</html>
