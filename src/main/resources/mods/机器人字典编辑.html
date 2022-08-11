@@ -61,14 +61,233 @@
         <el-col :span="6">
             <el-input v-model="filter.key" placeholder="筛选的key值"></el-input>
         </el-col>
+        <el-col :span="6">
+            <el-button type="primary" @click="changeEditType">点击切换 {{robotKetEditType}}</el-button>
+        </el-col>
     </el-row>
-     <el-row>
-         <el-col :span="6">
-             <el-input></el-input>
-         </el-col>
-     </el-row>
     </template>
     <el-divider></el-divider>
+    <el-row>
+        <el-col :span="6">
+            <el-button type="primary" @click="robotKeyEditVisible = true">新建一条</el-button>
+        </el-col>
+    </el-row>
+    <el-divider></el-divider>
+<!--    列表-->
+    <el-row>
+        <el-table :data="robotKeyJson.robotCommand" border style="background-color: deepskyblue;margin-top: 5px;margin-bottom: 5px" max-height="300">
+            <el-table-column label="指令类别" prop="activeService"></el-table-column>
+            <el-table-column label="生效规则&事件名" prop="activeWordRules">
+                <template slot-scope="scope">
+                    <div v-if="scope.row.activeService == '通用消息'">
+                     <template v-for="(singleRule,singleRuleIndex) in scope.row.activeWordRules">
+                         <el-row>{{singleRule}}</el-row>
+                     </template>
+                    </div>
+                    <div v-if="scope.row.activeService == '通用事件'">
+                        <el-row><span>{{scope.row.activeKey}}</span></el-row>
+                    </div>
+                </template>
+            </el-table-column>
+            <el-table-column label="允许选项" >
+                <template slot-scope="scope">
+                <div v-if="scope.row.activeService == '通用事件'" v-for="(singleWord,wordIndex) in scope.row.acceptWordRules">
+                    <el-row><span>{{singleWord}}</span></el-row>
+                </div>
+                </template>
+            </el-table-column>
+            <el-table-column label="前置增强器" prop="preAdvice">
+                <template slot-scope="scope">
+                    <template v-for="(singleAdvice,singleAdviceIndex) in scope.row.preAdvice">
+                        <el-row>{{singleAdvice}}</el-row>
+                    </template>
+                </template>
+            </el-table-column>
+            <el-table-column label="返回项目" >
+                <template slot-scope="scope">
+                    <template v-for="(singleRule,singleRuleIndex) in scope.row.returnWordRules">
+                        <el-row style="margin-bottom: 2px"><el-tag type="success" @click="showMoreMssage(singleRule)">点击查看详细返回{{singleRuleIndex+1}}</el-tag></el-row>
+                    </template>
+                </template>
+            </el-table-column>
+            <el-table-column label="操作" >
+                <template slot-scope="scope">
+                    <el-button type="warning" @click="editSingleRobotCommand(scope.row)">修改</el-button>
+                    <el-button type="danger" @click="deleteSingleRobotCommand(scope.$index)">删除</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </el-row>
+
+    <el-dialog title="修改字典"  :visible.sync="robotKeyEditVisible" width="90%" :before-close="beforeRobotKeyEditClose">
+    <template v-if="robotKetEditType === '字典'">
+            <el-row style="margin-bottom: 30px">
+                <el-col>
+                    <el-card class="box-card" style="background-color: azure">
+                        <div slot="header" class="clearfix">
+                            <span>{{singleRobotCommand.activeService}}</span>
+                            <el-button style="float: right; padding: 3px 0" type="text">切换类型</el-button>
+                        </div>
+                       <el-row v-if="singleRobotCommand.activeService === '通用消息'">
+                           <el-col>
+                               <el-card class="box-card" style="background-color: wheat">
+                                   <div slot="header" class="clearfix">
+                                       <span style="color: red;font-weight: bolder">触发规则</span>
+                                       <el-button style="float: right; padding: 3px 0" type="text">新增规则</el-button>
+                                   </div>
+                                   <div v-for="(activeRule,activeRuleIndex) in singleRobotCommand.activeWordRules">
+                                       <el-row>
+                                           <el-col :span="8">
+                                               <span>{{activeRule}}</span>
+                                           </el-col>
+                                           <el-col :span="8">
+                                               <el-button type="primary">修改</el-button>
+                                           </el-col>
+                                           <el-col :span="8">
+                                               <el-button type="danger">删除</el-button>
+                                           </el-col>
+                                       </el-row>
+                                       <el-divider></el-divider>
+                                   </div>
+                               </el-card>
+                           </el-col>
+                       </el-row>
+                        <el-row>
+                            <el-col>
+                                <el-card class="box-card" style="background-color: wheat;margin-top: 30px">
+                                    <div slot="header" class="clearfix">
+                                        <span style="color: red;font-weight: bolder">前置增强</span>
+                                        <el-button style="float: right; padding: 3px 0" type="text">新增增强</el-button>
+                                    </div>
+                                    <div v-for="(preAdvice,preAdviceIndex) in singleRobotCommand.preAdvice">
+                                        <el-row>
+                                            <el-col :span="8">
+                                                <span>{{preAdvice}}</span>
+                                            </el-col>
+                                            <el-col :span="8">
+                                                <el-button type="primary">修改</el-button>
+                                            </el-col>
+                                            <el-col :span="8">
+                                                <el-button type="danger">删除</el-button>
+                                            </el-col>
+                                        </el-row>
+                                        <el-divider></el-divider>
+                                    </div>
+                                </el-card>
+                            </el-col>
+                        </el-row>
+<!--                        选项-->
+                        <el-row>
+                            <el-col>
+                                <el-card class="box-card" style="background-color: wheat;margin-top: 30px">
+                                    <div slot="header" class="clearfix">
+                                        <span style="color: red;font-weight: bolder">可能返回项</span>
+                                        <el-button style="float: right; padding: 3px 0" type="text">新增返回项</el-button>
+                                    </div>
+                                    <div v-for="(returnWordRule,returnWordRulesIndex) in singleRobotCommand.returnWordRules">
+                                        <el-row>
+                                            <el-col>
+                                                <el-card class="box-card">
+                                                    <div slot="header" class="clearfix">
+                                                        <el-row>
+                                                        <el-col :span="4">
+                                                            <el-button type="danger">删除</el-button>
+                                                        </el-col>
+                                                        </el-row>
+                                                    </div>
+                                                    <el-row>
+                                                        <el-card class="box-card" style="background-color: cornsilk">
+                                                            <div slot="header" class="clearfix">
+                                                                <span>筛选器</span>
+                                                                <el-button style="float: right; padding: 3px 0" type="text">增加筛选器</el-button>
+                                                            </div>
+                                                            <div v-for="(filter,filterIndex) in returnWordRule.filter" class="text item">
+                                                               <el-row style="margin-top: 5px">
+                                                                   <el-col :span="8">
+                                                                       <span>{{filter}}</span>
+                                                                   </el-col>
+                                                                   <el-col :span="8">
+                                                                       <el-button type="primary">修改</el-button>
+                                                                   </el-col>
+                                                                   <el-col :span="8">
+                                                                       <el-button type="danger">删除</el-button>
+                                                                   </el-col>
+                                                               </el-row>
+                                                            </div>
+                                                        </el-card>
+                                                    </el-row>
+                                                    <el-row style="margin-top: 5px">
+                                                        <el-card class="box-card" style="background-color: cornsilk">
+                                                            <div slot="header" class="clearfix">
+                                                                <span>选择器</span>
+                                                                <el-button style="float: right; padding: 3px 0" type="text">增加选择器</el-button>
+                                                            </div>
+                                                            <div v-for="(repeatFilter,repeatFilterIndex) in returnWordRule.repeatFilter" class="text item">
+                                                                <el-row style="margin-top: 5px">
+                                                                    <el-col :span="8">
+                                                                        <span>{{repeatFilter}}</span>
+                                                                    </el-col>
+                                                                    <el-col :span="8">
+                                                                        <el-button type="primary">修改</el-button>
+                                                                    </el-col>
+                                                                    <el-col :span="8">
+                                                                        <el-button type="danger">删除</el-button>
+                                                                    </el-col>
+                                                                </el-row>
+                                                            </div>
+                                                        </el-card>
+                                                    </el-row>
+                                                    <el-row style="margin-top: 5px">
+                                                        <el-card class="box-card" style="background-color: cornsilk">
+                                                            <div slot="header" class="clearfix">
+                                                                <span>增强器</span>
+                                                                <el-button style="float: right; padding: 3px 0" type="text">增加增强器</el-button>
+                                                            </div>
+                                                            <div v-for="(advice,adviceIndex) in returnWordRule.advice" class="text item">
+                                                                <el-row style="margin-top: 5px">
+                                                                    <el-col :span="8">
+                                                                        <span>{{advice}}</span>
+                                                                    </el-col>
+                                                                    <el-col :span="8">
+                                                                        <el-button type="primary">修改</el-button>
+                                                                    </el-col>
+                                                                    <el-col :span="8">
+                                                                        <el-button type="danger">删除</el-button>
+                                                                    </el-col>
+                                                                </el-row>
+                                                            </div>
+                                                        </el-card>
+                                                    </el-row>
+                                                    <el-row style="margin-top: 5px">
+                                                    <el-card class="box-card" style="background-color: cornsilk">
+                                                        <div slot="header" class="clearfix">
+                                                            <span>返回语句</span>
+                                                        </div>
+                                                        <el-input placeholder="请输入返回语句" v-model="returnWordRule.returnMsg"></el-input>
+                                                    </el-card>
+                                        </el-row>
+                                                </el-card>
+                                            </el-col>
+                                        </el-row>
+                                        <el-divider></el-divider>
+                                    </div>
+                                </el-card>
+                            </el-col>
+                        </el-row>
+                    </el-card>
+                </el-col>
+            </el-row>
+
+            <el-divider></el-divider>
+    </template>
+        <span slot="footer" class="dialog-footer">
+    <el-button @click="robotKeyEditVisible = false">取 消</el-button>
+    <el-button type="primary" @click="robotKeyEditVisible = false">确 定</el-button>
+  </span>
+    </el-dialog>
+    <template v-if="robotKetEditType === '图片资源'">
+
+    </template>
 
 <!--    第二行为设置页面-->
 
@@ -93,26 +312,152 @@
                         label: "物品字典"
                     }
                 ],
-                chooseTypeOptionValue : null,
-                qqId : null,
-                activeCode: null,
+                chooseTypeOptionValue : "1",
+                qqId : "2477185748",
+                activeCode: "test",
                 showItem: false,
+                robotKeyEditVisible: false,
                 filter: {
                     key: null,
                 },
-                robotKeyJson : {
+                singleRobotCommand: {
 
+                    "activeWordRules" : [ "海丽送你 《爻入参》","海丽给你 《爻入参》","送给海丽 《爻入参》"],
+                    "activeService": "通用消息",
+                    "preAdvice": ["物品消耗(爻入参1,-1)","物品消耗(爻入参1,-1)","物品消耗(爻入参1,-1)","物品消耗(爻入参1,-1)"],
+                    "returnWordRules" : [
+                        {
+                            "filter" : ["相等筛选(爻前置1.返回结果,成功)","相等筛选(爻入参1,海丽的胸针)"],
+                            "repeatFilter": [],
+                            "advice": ["好感度增加(-50)"],
+                            "returnMsg" : "啊？竟然是这个! 《爻昵称》,如果这就是你的决定的话,我会尊重你的决定 《爻分隔》 但我还是想最后问一遍,《爻昵称》你确定吗？ 《爻事件.海丽送反定情信物》 "
+                        },
+                        {
+                            "filter" : ["相等筛选(爻前置1.返回结果,失败)"],
+                            "repeatFilter": [],
+                            "advice": [],
+                            "returnMsg" : "这是指 把空气送给我？《爻图片.HellyRobot.Normal_r5_c1.png》"
+                        }
+                    ]
                 },
+                robotKeyJson : {"voice":{"volume":"4F","speed":"-0.7F","voiceType":"101016L","primaryLanguage":"1L"},"assets":[],"robotCommand":[
+
+                        {
+                            "activeWordRules" : [ "海丽送你 《爻入参》","海丽给你 《爻入参》","送给海丽 《爻入参》"],
+                            "activeService": "通用消息",
+                            "preAdvice": ["物品消耗(爻入参1,-1)","物品消耗(爻入参1,-1)","物品消耗(爻入参1,-1)","物品消耗(爻入参1,-1)"],
+                            "returnWordRules" : [
+                                {
+                                    "filter" : ["相等筛选(爻前置1.返回结果,成功)","相等筛选(爻入参1,海丽的胸针)"],
+                                    "repeatFilter": [],
+                                    "advice": ["好感度增加(-50)"],
+                                    "returnMsg" : "啊？竟然是这个! 《爻昵称》,如果这就是你的决定的话,我会尊重你的决定 《爻分隔》 但我还是想最后问一遍,《爻昵称》你确定吗？ 《爻事件.海丽送反定情信物》 "
+                                },
+                                {
+                                    "filter" : ["相等筛选(爻前置1.返回结果,失败)"],
+                                    "repeatFilter": [],
+                                    "advice": [],
+                                    "returnMsg" : "这是指 把空气送给我？《爻图片.HellyRobot.Normal_r5_c1.png》"
+                                }
+                            ]
+                        },
+                        {
+                            "acceptWordRules" : [ "我确定","我再想想"],
+                            "activeKey" : "海丽送反定情信物",
+                            "activeService": "通用事件",
+                            "preAdvice": [],
+                            "returnWordRules" : [
+                                {
+                                    "activeAccept" : "我确定",
+                                    "filter" : [],
+                                    "repeatFilter": [],
+                                    "advice": ["好感度增加(-5000)"],
+                                    "returnMsg" : "...... 我会尊重你的决定 我们结束了！ 《爻图片.HellyRobot.Normal_r5_c0.png》 "
+                                },
+                                {
+                                    "activeAccept" : "我再想想",
+                                    "filter" : [],
+                                    "repeatFilter": [],
+                                    "advice": ["好感度增加(-50)"],
+                                    "returnMsg" : "下次不要再开这种玩笑了 《爻图片.HellyRobot.Normal_r2_c1.png》 "
+                                }
+                            ]
+                        }
+                    ],"activeCode":"asi"},
+                robotKetEditType : "字典",
                 robotItemJson : {
 
                 }
             }
         },
         mounted(){
-            // this.getConfig()
-            // setInterval(this.getConfig,10000)
         },
         methods: {
+            updateRobotCommandData() {
+                if (!this.checkIsParamsOk()) {
+                    return
+                }
+                let that = this
+                let params = that.robotKeyJson
+                params.qqId = that.qqId
+                params.type = that.chooseTypeOptionValue
+                params.resCode = that.activeCode
+                $.ajax({
+                    type: 'POST',
+                    url: that.requestUrl + "updateJsonFile",
+                    dataType: "json",
+                    contentType:'application/json;charset=utf-8',
+                    data: JSON.stringify(that.robotKeyJson),
+                    success: function (res) {
+                        console.log(res)
+                        if (res.code === 200) {
+                            that.$message.success(res.msg)
+                        }
+                    },
+                });
+            },
+            //删除一个机器人指令
+            deleteSingleRobotCommand(index) {
+                console.log(index)
+                let that = this
+                this.$confirm('此操作将永久删除该文件, 是否继续?' , "警告", {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    let robotJsonCommands = []
+                    for (let i = 0; i < that.robotKeyJson.robotCommand.length; i++) {
+                        if (i!== index) {
+                            robotJsonCommands.push(that.robotKeyJson.robotCommand[i])
+                        }
+                    }
+                    that.robotKeyJson.robotCommand = robotJsonCommands
+                    that.updateRobotCommandData()
+                }).catch((error) => {
+                  console.log(error)
+                });
+            },
+            editSingleRobotCommand(row) {
+              this.singleRobotCommand = row
+                this.robotKeyEditVisible = true
+            },
+            showMoreMssage(singleRule) {
+                this.$alert(singleRule.returnMsg, '补充内容', {
+                    confirmButtonText: '确定',
+                    callback: action => {
+                    }
+                });
+            },
+            beforeRobotKeyEditClose() {
+
+            },
+            changeEditType: function () {
+              if (this.robotKetEditType === "字典") {
+                  this.robotKetEditType = "图片资源"
+              }else {
+                  this.robotKetEditType = "字典"
+              }
+            },
             checkIsParamsOk: function () {
                 console.log("到这里里")
 
@@ -180,12 +525,24 @@
             },
             newRobotFile () {
                 let that = this
+                if (that.qqId == null || that.chooseTypeOptionValue == null || that.activeCode == null) {
+                    this.$message({
+                        message: 'qq号 字典类型 模组编码必填',
+                        type: 'warning'
+                    });
+                    return;
+                }
                 $.ajax({
                     url: that.requestUrl + "newJsonFile" + "?" + "qqId=" + that.qqId +  "&type=" + that.chooseTypeOptionValue + "&activeCode=" +that.activeCode,
                     dataType: "json",
                     type: "get",
                     success: function(result) {  //这里就是我出错的地方
-                        that.$message.success(result)
+                        that.$message.success(result.message)
+                        if (result.type === "1") {
+                            that.robotKeyJson = result.json
+                        }else if (result.type === "2") {
+                            that.robotItemJson = result.json
+                        }
                         console.log(result)
                     },
                     error: function(data) {
