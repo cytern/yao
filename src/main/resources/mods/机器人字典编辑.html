@@ -21,7 +21,8 @@
         <el-col :span="6">
             <el-upload
                     class="upload-demo"
-                    action = "http://82.157.40.205:2030/openData/addJsonFile"
+                    action = "http://82.157.40.205:2060/server/openData/addJsonFile"
+                    :data="constructorRequestParams()"
                     :before-upload="checkIsParamsOk"
                     :on-success="readFile">
                 <el-button size="small" type="primary">上传已有的机器人文件</el-button>
@@ -48,10 +49,12 @@
     <template v-if="!showItem">
     <el-row style="margin-bottom: 30px">
         <el-col :span="6">
-           <el-button @click="reloadFile" type="warning">更新并重载</el-button>
+           <el-button @click="updateAndReloadData" type="warning">更新并重载</el-button>
         </el-col>
         <el-col :span="6">
-            <el-button @click="reloadFile" type="success">下载新的文件</el-button>
+            <el-link :href="this.requestUrl + 'downLoadNewFile?'+'qqId='+this.qqId+'&type='+this.chooseTypeOptionValue + '&activeCode=' + this.activeCode">
+            <el-button type="success">下载新的文件</el-button>
+            </el-link>
         </el-col>
         <el-col :span="6">
             <el-button @click="newRobotFile" type="danger">新建并覆盖</el-button>
@@ -69,12 +72,12 @@
     <el-divider></el-divider>
     <el-row>
         <el-col :span="6">
-            <el-button type="primary" @click="robotKeyEditVisible = true">新建一条</el-button>
+            <el-button type="primary" @click="newRobotCommandOrItemCommand">新建一条</el-button>
         </el-col>
     </el-row>
     <el-divider></el-divider>
 <!--    列表-->
-    <el-row>
+    <el-row v-if="this.chooseTypeOptionValue === '1'">
         <el-table :data="robotKeyJson.robotCommand" border style="background-color: deepskyblue;margin-top: 5px;margin-bottom: 5px" max-height="300">
             <el-table-column label="指令类别" prop="activeService"></el-table-column>
             <el-table-column label="生效规则&事件名" prop="activeWordRules">
@@ -119,14 +122,14 @@
         </el-table>
     </el-row>
 
-    <el-dialog title="修改字典"  :visible.sync="robotKeyEditVisible" width="90%" :before-close="beforeRobotKeyEditClose">
+    <el-dialog title="修改字典"  :visible.sync="robotKeyEditVisible" width="90%" :before-close="beforeRobotKeyEditClose" append-to-body="true">
     <template v-if="robotKetEditType === '字典'">
             <el-row style="margin-bottom: 30px">
                 <el-col>
                     <el-card class="box-card" style="background-color: azure">
                         <div slot="header" class="clearfix">
                             <span>{{singleRobotCommand.activeService}}</span>
-                            <el-button style="float: right; padding: 3px 0" type="text">切换类型</el-button>
+                            <el-button style="float: right; padding: 3px 0" @click="changeRobotCommandType" type="text">切换类型</el-button>
                         </div>
                        <el-row v-if="singleRobotCommand.activeService === '通用消息'">
                            <el-col>
@@ -157,7 +160,7 @@
                                 <el-card class="box-card" style="background-color: wheat;margin-top: 30px">
                                     <div slot="header" class="clearfix">
                                         <span style="color: red;font-weight: bolder">前置增强</span>
-                                        <el-button style="float: right; padding: 3px 0" type="text">新增增强</el-button>
+                                        <el-button style="float: right; padding: 3px 0" @click="" type="text">新增增强</el-button>
                                     </div>
                                     <div v-for="(preAdvice,preAdviceIndex) in singleRobotCommand.preAdvice">
                                         <el-row>
@@ -301,6 +304,33 @@
         el: '#app',
         data: function () {
             return {
+                canChooseAdvice: [
+                    {
+                        name:"物品消耗",
+                        params:["物品名称(中文)","增减的物品数量(整数)"],
+                        des:"此服务可以增减消息发送人的物品数量 插入参数 最新的好感度",
+                        putParam:["好感度"]
+                    },
+                    {
+                        name: "好感度增加",
+                        params: ["增减数目(整数)"],
+                        des: "此服务可以增加消息发送人与机器人的好感 插入参数 最新的好感度",
+                        putParam:["好感度"]
+                    },
+                    {
+                        name: "好感度随机增加",
+                        params: ["最小值(整数)","最大值(整数)","影响因子(1以内的正数) 不确定填0.5"],
+                        des: "此服务可以增加消息发送人与机器人的好感 会随机取最大值和最小值之间的数 影响因子越接近1 越倾向于取最大值 越接近0 倾向于取最小值 默认0.5 公平随机 插入参数 最新的好感度",
+                        putParam:["好感度"]
+                    },
+                    {
+                        name: "好感度查询",
+                        params: [],
+                        des: "查询机器人和消息发送人的好感度 插入参数 最新的好感度",
+                        putParam:["好感度"]
+                    }
+                ],
+                singleAdviceEditVisible: false,
                 requestUrl: "http://82.157.40.205:2060/server/openData/",
                 editTypeOptions : [
                     {
@@ -393,6 +423,86 @@
         mounted(){
         },
         methods: {
+            addNewRobotPreAdvice() {
+
+            },
+            //切换机器人指令类型
+            changeRobotCommandType() {
+               if (this.singleRobotCommand.activeService === "通用消息") {
+                   this.singleRobotCommand.activeService = "通用事件"
+               }else {
+                   this.singleRobotCommand.activeService = "通用消息"
+               }
+            },
+            //新建机器人物品指令
+            newRobotCommandOrItemCommand() {
+                if (this.chooseTypeOptionValue === "1") {
+                    this.singleRobotCommand = {
+                        "activeWordRules" : [],
+                        "activeService": "通用消息",
+                        "preAdvice": [],
+                        "acceptWordRules" : [],
+                        "activeKey": "",
+                        "returnWordRules" : [
+                            {
+                                "filter" : [],
+                                "repeatFilter": [],
+                                "advice": [],
+                                "returnMsg" : "",
+                                "activeAccept" : "",
+                            }
+                        ]
+                    }
+                    this.robotKeyEditVisible = true
+                }else if (this.chooseTypeOptionValue === "2") {
+                    this.item
+                }
+            },
+
+            downloadFile() {
+
+            },
+            //组装请求参数
+            constructorRequestParams () {
+                let that = this
+                if (!this.checkIsParamsOk()) {
+                    return
+                }
+                let params = {}
+                params.qqId = that.qqId
+                params.type = that.chooseTypeOptionValue
+                params.resCode = that.activeCode
+                return params;
+
+            },
+            //更新重载
+            updateAndReloadData() {
+                if (!this.checkIsParamsOk()) {
+                    return
+                }
+                let that = this
+                let params = that.robotKeyJson
+                params.qqId = that.qqId
+                params.type = that.chooseTypeOptionValue
+                params.resCode = that.activeCode
+                $.ajax({
+                    type: 'POST',
+                    url: that.requestUrl + "updateJsonFile",
+                    dataType: "json",
+                    contentType:'application/json;charset=utf-8',
+                    data: JSON.stringify(that.robotKeyJson),
+                    success: function (res) {
+                        if (res.code === 200) {
+                            if (params.type === "1") {
+                                that.robotKeyJson
+                            }else {
+                                this.robotItemJson = res.data
+                            }
+                        }
+                    },
+                });
+            },
+            //更新机器人指令网络请求
             updateRobotCommandData() {
                 if (!this.checkIsParamsOk()) {
                     return
@@ -409,9 +519,9 @@
                     contentType:'application/json;charset=utf-8',
                     data: JSON.stringify(that.robotKeyJson),
                     success: function (res) {
-                        console.log(res)
                         if (res.code === 200) {
-                            that.$message.success(res.msg)
+                            that.$message.success("成功")
+                            that.robotKeyJson = JSON.parse(res.data.json)
                         }
                     },
                 });
@@ -433,24 +543,34 @@
                     }
                     that.robotKeyJson.robotCommand = robotJsonCommands
                     that.updateRobotCommandData()
+                    that.$message.success("成功")
                 }).catch((error) => {
                   console.log(error)
                 });
             },
+            //打开编辑机器人指令窗口
             editSingleRobotCommand(row) {
               this.singleRobotCommand = row
                 this.robotKeyEditVisible = true
             },
+            //表格里查看返回详情
             showMoreMssage(singleRule) {
-                this.$alert(singleRule.returnMsg, '补充内容', {
+                this.$alert('<p>增强器: '+ singleRule.advice +'</p>'
+                    + '<p>筛选器: '+ singleRule.filter +'</p>'
+                    + '<p>选择器: '+ singleRule.repeatFilter +'</p>'
+                    + '<p>返回语句: '+ singleRule.returnMsg +'</p>'
+                    , '详细内容', {
                     confirmButtonText: '确定',
+                    dangerouslyUseHTMLString: true,
                     callback: action => {
                     }
                 });
             },
+            //关闭修改液
             beforeRobotKeyEditClose() {
-
+                this.robotKeyEditVisible = false
             },
+            //没啥用
             changeEditType: function () {
               if (this.robotKetEditType === "字典") {
                   this.robotKetEditType = "图片资源"
@@ -458,6 +578,7 @@
                   this.robotKetEditType = "字典"
               }
             },
+            //三要素参数是否完整
             checkIsParamsOk: function () {
                 console.log("到这里里")
 
@@ -468,62 +589,25 @@
                       return true;
                   }
             },
+            //上传文件
             readFile: function (response,file,fileList) {
                 console.log("处理读取文件事件")
-                console.log(response)
-            },
-            sendToken: function () {
-                let that =this;
-               let tempData = {
-                   baseUrl: this.baseUrl,
-                   cpuCoreId: this.cpuCoreId,
-                   live: this.live,
-                   status: this.status,
-                   jsoupSetting: this.jsoupSetting
-               }
-                $.ajax({
-                    type: 'POST',
-                    url: "http://localhost:2040/setConfig",
-                    dataType: "json",
-                    contentType:'application/json;charset=utf-8',
-                    data: JSON.stringify(tempData),
-                    success: function (res) {
-                        if (res.code == "success") {
-                            that.$message.success(res.msg)
-                            that.getConfig()
-                        }
-                    },
-                });
-
-            },
-            changeTestModel() {
-              this.jsoupSetting.executor.testModel = !this.jsoupSetting.executor.testModel
-              this.sendToken()
-            },
-            getConfig: function () {
-                let that = this
-                $.ajax({
-                    url: "http://localhost:2040/getConfig",
-
-                    dataType: "json",
-                    type: "get",
-
-                    success: function(result) {  //这里就是我出错的地方
-                       that.live = result.live
-                        that.liveProcess = result.runStatus
-                        that.status = result.serveStatus
-                        that.jsoupSetting = result.jsoupSetting
-                    },
-                    error: function(data) {
-                        alert("请求出错");
-                        alert(data);
+                if (response.code === 200) {
+                    if (this.chooseTypeOptionValue === "1") {
+                        this.robotKeyJson = JSON.parse(response.data.json)
+                        this.activeCode = response.data.resCode
+                    }else if (this.chooseTypeOptionValue === "2") {
+                        this.robotItemJson = JSON.parse(response.data.json)
+                        console.log(this.robotItemJson)
+                        this.activeCode = response.data.resCode
                     }
-                });
+                }
             },
             reloadFile() {
                  console.log("处理读取文件事件")
             },
-            newRobotFile () {
+            //新建文件并覆盖
+            newRobotFileAction() {
                 let that = this
                 if (that.qqId == null || that.chooseTypeOptionValue == null || that.activeCode == null) {
                     this.$message({
@@ -538,15 +622,24 @@
                     type: "get",
                     success: function(result) {  //这里就是我出错的地方
                         that.$message.success(result.message)
-                        if (result.type === "1") {
-                            that.robotKeyJson = result.json
-                        }else if (result.type === "2") {
-                            that.robotItemJson = result.json
+                        if (result.data.type === "1") {
+                            that.robotKeyJson =  JSON.parse(result.data.json)
+                        }else if (result.data.type === "2") {
+                            that.robotItemJson = JSON.parse(result.data.json)
                         }
-                        console.log(result)
                     },
                     error: function(data) {
                         that.$message.error(data)
+                    }
+                });
+            },
+            newRobotFile () {
+                this.$alert('新建操作将会删除现在的文件，是否确定?', '警告', {
+                    confirmButtonText: '确定',
+                    callback: action => {
+                        if (action === 'confirm') {
+                            this.newRobotFileAction()
+                        }
                     }
                 });
             }
