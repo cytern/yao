@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -122,7 +122,7 @@
         </el-table>
     </el-row>
 
-    <el-dialog title="修改字典"  :visible.sync="robotKeyEditVisible" width="90%" :before-close="beforeRobotKeyEditClose" append-to-body="true">
+    <el-dialog title="修改字典"  :visible.sync="robotKeyEditVisible" width="90%" :before-close="beforeRobotKeyEditClose">
     <template v-if="robotKetEditType === '字典'">
             <el-row style="margin-bottom: 30px">
                 <el-col>
@@ -144,23 +144,50 @@
                                                <span>{{activeRule}}</span>
                                            </el-col>
                                            <el-col :span="8">
-                                               <el-button type="primary">修改</el-button>
+                                               <el-button type="primary" @click="editActiveRule(activeRuleIndex)">修改</el-button>
                                            </el-col>
                                            <el-col :span="8">
-                                               <el-button type="danger">删除</el-button>
+                                               <el-button type="danger" @click="deleteActiveRule(activeRuleIndex)">删除</el-button>
                                            </el-col>
                                        </el-row>
                                        <el-divider></el-divider>
                                    </div>
                                </el-card>
                            </el-col>
+                           <el-dialog  title="触发语句修改"
+                                       :visible.sync="activeRuleEditVisible" append-to-body
+                                       width="80%">
+                                  <el-row> <el-col :span="4">
+                                      触发语句:
+                                  </el-col>
+                                      <el-col :span="20">
+                                          <el-input v-model="singleActiveRule">
+
+                                          </el-input>
+                                      </el-col></el-row>
+                                      <el-row style="margin-top: 10px">
+                                          <el-col :span="12" style="margin-top: 5px">
+                                              可选参数(请使用触发语句 + 空格 +《爻参数》):
+                                          </el-col>
+                                          <el-col :span="12" style="margin-top: 5px">
+                                              例如: 给海丽 《爻入参》
+                                          </el-col>
+                                          <el-col :span="12" style="margin-top: 5px">
+                                              <el-tag >《爻入参》</el-tag>
+                                          </el-col>
+                                      </el-row>
+                                  <span slot="footer" class="dialog-footer">
+                                    <el-button @click="activeRuleEditVisible = false">取 消</el-button>
+                                    <el-button type="primary" @click="activeRuleEditVisible = false">确 定</el-button>
+                                  </span>
+                           </el-dialog>
                        </el-row>
                         <el-row>
                             <el-col>
                                 <el-card class="box-card" style="background-color: wheat;margin-top: 30px">
                                     <div slot="header" class="clearfix">
                                         <span style="color: red;font-weight: bolder">前置增强</span>
-                                        <el-button style="float: right; padding: 3px 0" @click="" type="text">新增增强</el-button>
+                                        <el-button style="float: right; padding: 3px 0" @click="addNewRobotPreAdvice(1,0)" type="text">新增增强</el-button>
                                     </div>
                                     <div v-for="(preAdvice,preAdviceIndex) in singleRobotCommand.preAdvice">
                                         <el-row>
@@ -168,10 +195,10 @@
                                                 <span>{{preAdvice}}</span>
                                             </el-col>
                                             <el-col :span="8">
-                                                <el-button type="primary">修改</el-button>
+                                                <el-button type="primary" @click="editPreAdvice(preAdviceIndex)">修改</el-button>
                                             </el-col>
                                             <el-col :span="8">
-                                                <el-button type="danger">删除</el-button>
+                                                <el-button type="danger" @click="deletePreAdvice(preAdviceIndex)">删除</el-button>
                                             </el-col>
                                         </el-row>
                                         <el-divider></el-divider>
@@ -287,6 +314,48 @@
     <el-button @click="robotKeyEditVisible = false">取 消</el-button>
     <el-button type="primary" @click="robotKeyEditVisible = false">确 定</el-button>
   </span>
+        <el-dialog
+                title="提示"
+                :visible.sync="adviceEditVisible" append-to-body
+                width="80%"
+        >
+          <el-row>
+              <el-col :span="4">选择服务名称 </el-col> <el-col :span="20"><el-select v-model="singleAdvice.rowKey" placeholder="请选择" style="width: 100%" @change="changeAdviceData">
+                <el-option
+                        v-for="item in canChooseAdvice"
+                        :key="item.rowKey"
+                        :label="item.name + ' (' + item.params + ')'"
+                        :value="item.rowKey">
+                </el-option>
+            </el-select> </el-col>
+          </el-row>
+              <template v-for="(chooseAdvice,chooseAdviceIndex) in singleAdvice.advice.params">
+              <el-row style="margin-top: 5px">
+                  <el-col :span="4">
+                      请输入参数{{chooseAdvice}}
+                  </el-col>
+                  <el-col :span="20">
+                      <el-input v-model="singleAdvice.params[chooseAdviceIndex]"></el-input>
+                  </el-col>
+              </el-row>
+              </template>
+            <el-row style="margin-top: 10px">
+                <p>{{singleAdvice.advice.des}}</p>
+            </el-row>
+
+            <el-row style="margin-top: 10px">
+                <el-col :span="4">可选参数:</el-col>
+                <template v-for="(singleCanUseParam,canUserIndex) in singleRobotCommand.canUseParams">
+                    <el-col :span="4">
+                        <el-tag v-if="singleCanUseParam.indexOf('爻前置') === -1" @click="copyValueTo(singleCanUseParam)" type="success">{{singleCanUseParam}}</el-tag>
+                    </el-col>
+                </template>
+            </el-row>
+            <span slot="footer" class="dialog-footer">
+    <el-button @click="adviceEditVisible = false">取 消</el-button>
+    <el-button type="primary" @click="handleAdviceChange">确 定</el-button>
+  </span>
+        </el-dialog>
     </el-dialog>
     <template v-if="robotKetEditType === '图片资源'">
 
@@ -307,27 +376,31 @@
                 canChooseAdvice: [
                     {
                         name:"物品消耗",
-                        params:["物品名称(中文)","增减的物品数量(整数)"],
+                        params:["物品名称[中文]","增减的物品数量[整数]"],
                         des:"此服务可以增减消息发送人的物品数量 插入参数 最新的好感度",
-                        putParam:["好感度"]
+                        putParam:["好感度"],
+                        rowKey:"物品消耗(1,2)"
                     },
                     {
                         name: "好感度增加",
-                        params: ["增减数目(整数)"],
+                        params: ["增减数目[整数]"],
                         des: "此服务可以增加消息发送人与机器人的好感 插入参数 最新的好感度",
-                        putParam:["好感度"]
+                        putParam:["好感度"],
+                        rowKey:"好感度增加(1)"
                     },
                     {
                         name: "好感度随机增加",
-                        params: ["最小值(整数)","最大值(整数)","影响因子(1以内的正数) 不确定填0.5"],
+                        params: ["最小值[整数]","最大值[整数]","影响因子[1以内的正数]"],
                         des: "此服务可以增加消息发送人与机器人的好感 会随机取最大值和最小值之间的数 影响因子越接近1 越倾向于取最大值 越接近0 倾向于取最小值 默认0.5 公平随机 插入参数 最新的好感度",
-                        putParam:["好感度"]
+                        putParam:["好感度"],
+                        rowKey:"好感度随机增加(1,2,3)"
                     },
                     {
                         name: "好感度查询",
                         params: [],
                         des: "查询机器人和消息发送人的好感度 插入参数 最新的好感度",
-                        putParam:["好感度"]
+                        putParam:["好感度"],
+                        rowKey:"好感度查询()"
                     }
                 ],
                 singleAdviceEditVisible: false,
@@ -346,9 +419,26 @@
                 qqId : "2477185748",
                 activeCode: "test",
                 showItem: false,
+                //机器人语句修改弹窗
                 robotKeyEditVisible: false,
+                //前置增强服务弹窗
+                adviceEditVisible: false,
+                //触发语句修改弹窗
+                activeRuleEditVisible:false,
+                singleActiveRule: null,
                 filter: {
                     key: null,
+                },
+                singleAdvice:{
+                  rowKey: null,
+                    commandIndex: null,
+                    adviceIndex:null,
+                    name: null,
+                    params: [],
+                    advice: {},
+                    tempParam: null,
+                    returnIndex: null,
+
                 },
                 singleRobotCommand: {
 
@@ -368,7 +458,8 @@
                             "advice": [],
                             "returnMsg" : "这是指 把空气送给我？《爻图片.HellyRobot.Normal_r5_c1.png》"
                         }
-                    ]
+                    ],
+                    "canUseParams":[]
                 },
                 robotKeyJson : {"voice":{"volume":"4F","speed":"-0.7F","voiceType":"101016L","primaryLanguage":"1L"},"assets":[],"robotCommand":[
 
@@ -423,8 +514,191 @@
         mounted(){
         },
         methods: {
-            addNewRobotPreAdvice() {
+            // 修改规则
+            editActiveRule(index) {
+                let rule = this.singleRobotCommand.activeWordRules[index]
+                this.singleActiveRule = rule
+                this.activeRuleEditVisible = true
+            },
+            //删除规则
+            deleteActiveRule(index) {
+              let activeRule = []
+                for (let i = 0; i < this.singleRobotCommand.activeWordRules.length; i++) {
+                    if (i!= index) {
+                        activeRule.push(this.singleRobotCommand.activeWordRules[i])
+                    }
+                }
+                this.singleRobotCommand.activeWordRules = activeRule
+            },
+            copyValueTo(text) {
+                this.$message.error("复制失败 请手动复制")
+            },
+            //处理并且获得可能的可用参数
+            handleAndGetCanUserParams (singleCommand) {
+                singleCommand.canUseParams = []
+                let activeKet = singleCommand.activeWordRules[0]
+                if (activeKet!= null && activeKet!== "" && activeKet.indexOf("《")!= -1) {
+                    let split = activeKet.match(/\《(.+?)\》/gi);
+                    for (let i = 0; i < split.length; i++) {
+                        singleCommand.canUseParams.push("爻入参" + (i+1))
+                    }
+                }
+                let preArray = singleCommand.preAdvice
+                if (preArray!= null && preArray.length >0) {
+                    for (let i = 0; i < preArray.length; i++) {
+                        let putParams = this.getThatAdviceParams(1,this.getServiceRowKey(preArray[i]))
+                        if (putParams!= null && putParams.length>0) {
+                            for (let j = 0; j < putParams.length; j++) {
+                                singleCommand.canUseParams.push("爻前置"+(i+1)+"."+putParams[j])
+                            }
+                        }
+                    }
+                }
+                let returnWordRules = singleCommand.returnWordRules
+                for (let i = 0; i < returnWordRules.length; i++) {
+                    returnWordRules[i].canUseParams = []
+                    //前置参数有的全有
+                    for (let j = 0; j < singleCommand.canUseParams.length; j++) {
+                        returnWordRules[i].canUseParams[i] = singleCommand.canUseParams[j]
+                    }
+                    //取独特的增强器
+                    let adviceArray = returnWordRules[i].advice
+                    if (adviceArray!= null && adviceArray.length >0) {
+                        for (let a = 0; a < adviceArray.length; a++) {
+                            let putParams = this.getThatAdviceParams(1,this.getServiceRowKey(preArray[i]))
+                            if (putParams!= null && putParams.length>0) {
+                                for (let b = 0; b < putParams.length; b++) {
+                                    returnWordRules[i].canUseParams.push("爻服务"+(b+1)+"."+putParams[b])
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            //获取这个服务可能获得的参数列表
+            getThatAdviceParams(type,rowKey) {
+                if (type === 1) {
+                    for (let i = 0; i < this.canChooseAdvice.length; i++) {
+                       let singleChoose = this.canChooseAdvice[i]
+                        if (singleChoose.rowKey === rowKey) {
+                            return singleChoose.putParam
+                        }
+                    }
+                }
 
+                return null
+            },
+            getThatAdvice(type,rowKey) {
+                if (type === 1) {
+                    for (let i = 0; i < this.canChooseAdvice.length; i++) {
+                        let singleChoose = this.canChooseAdvice[i]
+                        if (singleChoose.rowKey === rowKey) {
+                            return singleChoose
+                        }
+                    }
+                }
+                return null
+            },
+            //修改前置增强
+            editPreAdvice(index) {
+                this.addNewRobotPreAdvice(2,index)
+            },
+            //删除前置增强
+            deletePreAdvice(index) {
+              let tempPreAdvice = []
+                for (let i = 0; i < this.singleRobotCommand.preAdvice.length; i++) {
+                    if (i!= index) {
+                        tempPreAdvice.push(this.singleRobotCommand.preAdvice[i])
+                    }
+                }
+                this.singleRobotCommand.preAdvice = tempPreAdvice
+                this.$message.success("删除成功")
+            },
+
+            //操作增强变更
+            handleAdviceChange() {
+                if (this.singleAdvice.adviceIndex === null && this.singleAdvice.returnIndex === null) {
+                   let finalMsg = this.dealAndGetFinalData(1,this.singleAdvice.advice.name,this.singleAdvice.params)
+                    this.singleRobotCommand.preAdvice.push(finalMsg)
+                    this.adviceEditVisible = false
+                    this.$message.success("添加成功")
+                }
+            },
+            dealAndGetFinalData(type,name,params) {
+                let finalMsg = ""
+                //正常处理
+                if (type === 1) {
+                    finalMsg = finalMsg + name + "("
+                    if (params.length === 0) {
+                        finalMsg = finalMsg + ")"
+                        return finalMsg;
+                    }else {
+                        for (let i = 0; i < params.length; i++) {
+                            let singlePa = params[i]
+                            finalMsg = finalMsg + singlePa
+                            if (params.length-1 === i) {
+                                finalMsg = finalMsg + ")"
+                            }else {
+                                finalMsg = finalMsg + ","
+                            }
+                        }
+                        return finalMsg;
+                    }
+                }
+            },
+            changeAdviceData (value) {
+                for (let i = 0; i < this.canChooseAdvice.length; i++) {
+                    let singleAdvice = this.canChooseAdvice[i]
+                    if (singleAdvice.rowKey === value) {
+                        this.singleAdvice.advice = singleAdvice
+                    }
+                }
+            },
+            addNewRobotPreAdvice(type,index) {
+                if (type === 1) {
+                    let singleCommand = this.singleRobotCommand
+                    this.singleAdvice = {
+                        rowKey: null,
+                        commandIndex: null,
+                        adviceIndex:null,
+                        returnIndex: null,
+                        name: null,
+                        params: [],
+                        advice: {}
+                    }
+                    this.adviceEditVisible = true
+                }else if (type === 2) {
+                    this.singleAdvice.adviceIndex = index
+                    let rowAdvice = this.singleRobotCommand.preAdvice[index]
+                    let rowKey =  this.getServiceRowKey(rowAdvice)
+                    console.log(rowKey)
+                    this.singleAdvice.advice = this.getThatAdvice(1,rowKey)
+                    this.adviceEditVisible = true
+                }
+            },
+            getServiceRowKey (rowAdvice) {
+                let split = rowAdvice.match(/\((.+?)\)/g).toString();
+                split = split.substring(1, split.length - 1)
+                let rowParams = split.split(",")
+                if (rowParams === "" || rowParams === null) {
+                    this.singleAdvice.rowKey = rowAdvice
+                    this.singleAdvice.name = rowAdvice.substring(0, rowAdvice.indexOf("("))
+                    return rowKey
+                } else {
+                    this.singleAdvice.name = rowAdvice.substring(0, rowAdvice.indexOf("("))
+                    let rowKey = this.singleAdvice.name
+                    rowKey = rowKey + "("
+                    for (let i = 0; i < rowParams.length; i++) {
+                        this.singleAdvice.params[i] = rowParams[i]
+                        if (rowParams.length - 1 === i) {
+                            rowKey = rowKey + (i + 1) + ")"
+                        } else {
+                            rowKey = rowKey + (i + 1) + ","
+                        }
+                    }
+                    this.singleAdvice.rowKey = rowKey
+                    return rowKey;
+                }
             },
             //切换机器人指令类型
             changeRobotCommandType() {
@@ -551,6 +825,7 @@
             //打开编辑机器人指令窗口
             editSingleRobotCommand(row) {
               this.singleRobotCommand = row
+                this.handleAndGetCanUserParams(this.singleRobotCommand)
                 this.robotKeyEditVisible = true
             },
             //表格里查看返回详情
@@ -580,8 +855,6 @@
             },
             //三要素参数是否完整
             checkIsParamsOk: function () {
-                console.log("到这里里")
-
                   if (this.qqId === null ||this.activeCode === null || this.chooseTypeOptionValue == null) {
                       this.$message.error('qq号或凭证 模组编码 操作类型 必填');
                       return false;
